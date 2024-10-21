@@ -9,6 +9,6 @@ Réinventez la communication en ligne avec une plateforme open source, gratuite,
 Aucun Financement Monétaire : Pas de profit ni de discussions liées à l'argent, pour une expérience totalement axée sur l'utilisateur.
 
 Originalité et Innovation : Découvrez une plateforme unique qui casse les codes des réseaux sociaux traditionnels, sans hiérarchie sociale ni chef de modération.
-#utlisation pour but de test en local car serveur en http . 
+##utlisation pour but de test en local car serveur en http . 
 
 ## Rejoignez Liberchat pour une expérience de communication véritablement libre et équitable, façonnée par et pour la communauté.
