@@ -4,7 +4,7 @@
 
 <img src="public/images/liberchat-logo.svg" alt="Liberchat Logo" width="200"/>
 
-[![Version](https://img.shields.io/badge/Version-Beta%201.0.0-red?style=for-the-badge)](https://github.com/AnARCHIS12/Liberchat-3.0/releases)
+[![Version](https://img.shields.io/badge/Version-Beta%201.0.0-red?style=for-the-badge)](#)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
@@ -90,10 +90,10 @@ npm run dev
 ## 📦 Releases
 
 ### Dernière version
-[![Release](https://img.shields.io/badge/Release-Beta%201.0.0-red?style=for-the-badge)](https://github.com/AnARCHIS12/Liberchat-3.0/releases/tag/beta-1.0.0)
+[![Release](https://img.shields.io/badge/Release-Beta%201.0.0-red?style=for-the-badge)](#)
 
 La dernière version (Beta 1.0.0) inclut :
-- Le nouveau logo anarchiste (A dans un cercle)
+- Le nouveau logo moderne
 - L'interface de chat en temps réel
 - Le support des messages texte
 
@@ -205,7 +205,7 @@ Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
 
 ## 📧 Contact
 
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AnARCHIS12)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](#)
 [![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/)
 
@@ -213,6 +213,6 @@ Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
 
 <img src="public/images/liberchat-logo.svg" alt="Liberchat Logo" width="100"/>
 
-**Made with ❤️ by [AnARCHIS12](https://github.com/AnARCHIS12)**
+**Made with ❤️ by Liberchat Team**
 
 </div>
