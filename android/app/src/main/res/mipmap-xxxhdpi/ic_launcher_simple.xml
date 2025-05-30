@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="192dp"
+    android:height="192dp"
+    android:viewportWidth="192"
+    android:viewportHeight="192">
+    
+    <!-- Cercle de fond -->
+    <path
+        android:fillColor="#cc0000"
+        android:pathData="M96,16 A80,80 0 1,1 96,176 A80,80 0 1,1 96,16"/>
+    
+    <!-- Faucille -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M120,72 C140,52 150,42 160,32 C150,42 140,52 130,72 C120,92 120,102 130,112 C140,122 130,132 120,142 C110,152 100,152 90,142 C80,132 80,122 90,112 C100,102 100,92 120,72"/>
+    
+    <!-- Marteau -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M70,142 L90,122 L80,112 L60,132 L70,142 M75,137 L85,127 L95,137 L85,147 L75,137"/>
+</vector>

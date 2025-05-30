@@ -1,0 +1,22 @@
+{
+  "name": "LiberChat",
+  "bundleIdentifier": "com.liberchat.app",
+  "developerName": "AnARCHIS12",
+  "version": "1.0.0",
+  "versionDate": "2025-01-25",
+  "versionDescription": "Version initiale avec chat en temps réel",
+  "downloadURL": "https://anarchis12.github.io/Liberchat-3.0/ios/LiberChat.ipa",
+  "localizedDescription": "Application de chat en temps réel avec logo anarchiste",
+  "iconURL": "https://anarchis12.github.io/Liberchat-3.0/images/liberchat-logo.svg",
+  "tintColor": "ff4444",
+  "size": 5000000,
+  "screenshotURLs": [
+    "https://anarchis12.github.io/Liberchat-3.0/images/screenshot1.png"
+  ],
+  "permissions": [
+    {
+      "type": "network",
+      "usageDescription": "Accès internet requis pour le chat en temps réel"
+    }
+  ]
+}

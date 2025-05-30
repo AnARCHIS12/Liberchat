@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    
+    <!-- Étoile rouge -->
+    <path
+        android:fillColor="#cc0000"
+        android:pathData="M256,60L292,188L428,188L318,272L354,400L256,328L158,400L194,272L84,188L220,188Z"/>
+    
+    <!-- Bulle de chat -->
+    <path
+        android:strokeColor="#cc0000"
+        android:strokeWidth="24"
+        android:fillColor="#00000000"
+        android:pathData="M256,140Q380,140 380,240Q380,320 300,320L256,320L220,360L220,320Q132,320 132,240Q132,140 256,140Z"/>
+    
+    <!-- Symbole @ -->
+    <path
+        android:fillColor="#cc0000"
+        android:pathData="M256,200Q300,200 300,240Q300,280 256,280Q212,280 212,240Q212,200 256,200M256,180Q190,180 190,240Q190,300 256,300Q322,300 322,240Q322,180 256,180"/>
+</vector>

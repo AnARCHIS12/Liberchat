@@ -1,96 +1,218 @@
-# 🤖 ANTI-DROITARD BOT
+<div align="center">
 
-```ascii
-    _          _   _    _____ _____ ____  ____   ___  _____ _____  _    ____  ____  
-   / \   _ __ | |_(_)  |  ___|  ___|  _ \/ ___| / _ \|_   _|  __ \| |  |  _ \|  _ \ 
-  / _ \ | '_ \| __| |  | |_  | |_  | |_) \___ \| | | | | | | |__) | |  | |_) | | | |
- / ___ \| | | | |_| |  |  _| |  _| |  _ < ___) | |_| | | | |  _  /| |__|  _ <| |_| |
-/_/   \_\_| |_|\__|_|  |_|   |_|   |_| \_\____/ \___/  |_| |_| \_\|____|_| \_\____/ 
-```
+# 🚀 Liberchat 
 
-[![Version](https://img.shields.io/github/v/release/AnARCHIS12/antidroitard-?include_prereleases&style=flat&color=00ff00)](https://github.com/AnARCHIS12/antidroitard-/releases)
-[![Stars](https://img.shields.io/github/stars/AnARCHIS12/antidroitard-?style=flat&color=ffff00)](https://github.com/AnARCHIS12/antidroitard-/stargazers)
-[![License](https://img.shields.io/github/license/AnARCHIS12/antidroitard-?style=flat&color=ff69b4)](LICENSE)
+<img src="public/images/liberchat-logo.svg" alt="Liberchat Logo" width="200"/>
 
-> *"La protection de serveur Discord nouvelle génération, propulsée par l'intelligence artificielle "*
+[![Version](https://img.shields.io/badge/Version-Beta%201.0.0-red?style=for-the-badge)](https://github.com/AnARCHIS12/Liberchat-3.0/releases)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+
+**Une application de chat en temps réel nouvelle génération**
+
+[📝 Documentation](#-documentation) | [🤝 Contribuer](#-contribution) | [📧 Contact](#-contact)
 
 ---
 
-## Caractéristiques Révolutionnaires
+</div>
 
-### Protection Avancée
-```mermaid
-graph LR
-    A[Attaque] -->|Détection IA| B{Analyse}
-    B -->|Menace| C[Blocage]
-    B -->|Légitime| D[Autorisation]
-    C --> E[Logs]
-    D --> E
+## ✨ Caractéristiques Principales
+
+<div align="center">
+<table>
+<tr>
+<td align="center">
+    <img src="https://img.icons8.com/fluency/48/000000/comments.png" width="30"/>
+    <br />Chat en Temps Réel
+</td>
+<td align="center">
+    <img src="https://img.icons8.com/fluency/48/000000/user-group-man-woman.png" width="30"/>
+    <br />Liste des Utilisateurs
+</td>
+<td align="center">
+    <img src="https://img.icons8.com/fluency/48/000000/security-checked.png" width="30"/>
+    <br />Sécurisé
+</td>
+<td align="center">
+    <img src="https://img.icons8.com/fluency/48/000000/palette.png" width="30"/>
+    <br />Thème Sombre
+    <img src="https://img.icons8.com/fluency/48/000000/design-style.png" width="30"/>
+    <br />Style Moderne
+</td>
+</tr>
+</table>
+</div>
+
+### 🎯 Fonctionnalités Détaillées
+
+- 💬 **Chat en Temps Réel**
+  - Messages instantanés
+  - Indicateur de frappe
+  - Historique des messages
+  - Emojis et réactions
+
+- 👥 **Gestion des Utilisateurs**
+  - Liste des utilisateurs en ligne
+  - Statuts de connexion
+  - Notifications en temps réel
+  - Noms d'utilisateur uniques
+
+- 🛡️ **Sécurité**
+  - Connexions sécurisées
+  - Authentification utilisateur
+  - Protection contre le spam
+
+- 🎨 **Interface**
+  - Thème sombre élégant
+  - Animations fluides
+  - Interface intuitive
+  - Style moderne
+
+## 📚 Documentation
+
+- [Guide d'installation](docs/Installation.md)
+- [Guide d'utilisation](docs/Utilisation.md)
+- [FAQ](docs/FAQ.md)
+- [Guide de contribution](docs/Contribution.md)
+
+## 🚀 Démarrage Rapide
+
+```bash
+# 1. Installez les dépendances
+npm install
+
+# 2. Lancez en mode développement
+npm run dev
 ```
 
-- **IA Prédictive** : Détection des menaces avant qu'elles ne se produisent
-- **Cryptographie Militaire** : Protection des données de niveau militaire
-- **Performance Quantique** : Temps de réponse < 0.001ms
-- **Précision 99.99%** : Taux de faux positifs quasi nul
+## 📦 Releases
 
-### 🎮 Interface de Commandes
+### Dernière version
+[![Release](https://img.shields.io/badge/Release-Beta%201.0.0-red?style=for-the-badge)](https://github.com/AnARCHIS12/Liberchat-3.0/releases/tag/beta-1.0.0)
+
+La dernière version (Beta 1.0.0) inclut :
+- Le nouveau logo anarchiste (A dans un cercle)
+- L'interface de chat en temps réel
+- Le support des messages texte
 
 <div align="center">
 
-| Commande | Description | Délai de Sécurité |
-|----------|-------------|-------------------|
-| `/antiraid` | 🛡️ Protection anti-raid avec vérification des permissions | 5s |
+## 🛠️ Technologies Utilisées
+
+<table>
+<tr>
+<td align="center">
+    <img src="https://img.shields.io/badge/-React-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
+</td>
+<td align="center">
+    <img src="https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+</td>
+<td align="center">
+    <img src="https://img.shields.io/badge/-Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white" />
+</td>
+</tr>
+<tr>
+<td align="center">
+    <img src="https://img.shields.io/badge/-Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" />
+</td>
+<td align="center">
+    <img src="https://img.shields.io/badge/-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" />
+</td>
+<td align="center">
+    <img src="https://img.shields.io/badge/-Express-000000?style=for-the-badge&logo=express&logoColor=white" />
+</td>
+</tr>
+</table>
 
 </div>
 
-La commande `/antiraid` :
-- Nécessite les permissions Administrateur
-- Demande une confirmation explicite
-- Inclut un délai de sécurité de 5 secondes
-- Est réservée aux administrateurs du serveur
+## 📦 Installation
 
-## ⚡ Configuration et Démarrage
+### Prérequis
 
-1. **Configuration du Token Discord**
+- Node.js (v14+)
+- npm ou yarn
+- Un navigateur moderne
+
+### Configuration
+
+1. **Variables d'Environnement**
 ```env
-TOKEN=votre_token_discord
+NODE_ENV=production
+PORT=3000
 ```
 
-2. **Installation des dépendances**
-```bash
-npm install discord.js dotenv
+2. **Configuration Render.com**
+```yaml
+Build Command: npm install --production=false && npm run build
+Start Command: npm start
 ```
 
-3. **Démarrage du Bot**
-```bash
-node index.js
-```
+## 🌟 Utilisation
 
-Une fois le bot démarré, vous verrez :
-- Le statut de connexion
-- Le lien d'invitation pour ajouter le bot à votre serveur
-- La confirmation que les commandes slash sont enregistrées
+1. **Démarrage**
+   - Accédez à l'application
+   - Choisissez un nom d'utilisateur
+   - Commencez à chatter !
 
-## 🌟 Support
+2. **Chat**
+   - Envoyez des messages instantanés
+   - Utilisez des emojis
+   - Voyez qui est en ligne
+
+3. **Personnalisation**
+   - Choisissez votre nom d'utilisateur
+   - Profitez du thème sombre
+   - Interface intuitive
 
 <div align="center">
 
-**[Documentation](docs.md)** • **[Contribution](CONTRIBUTING.md)** • **[Support](SUPPORT.md)**
+## 📱 Captures d'écran
 
-*Propulsé par l'énergie des trous noirs et le café ☕*
+<table>
+<tr>
+<td align="center">
+    <strong>Chat Interface</strong>
+    <br />
+    <img src="public/images/liberchat-logo.svg" width="200"/>
+</td>
+<td align="center">
+    <strong>Dark Theme</strong>
+    <br />
+    <img src="public/images/liberchat-logo.svg" width="200"/>
+</td>
+</tr>
+</table>
 
 </div>
 
-## Licence Quantique
+## 🤝 Contribution
 
-Ce projet est protégé par les lois de la physique quantique et la licence MIT.
+Nous adorons les contributions ! Voici comment participer :
 
----
+1. 🔧 Créez une branche pour votre fonctionnalité (`git checkout -b feature/AmazingFeature`)
+2. 💫 Commitez vos changements (`git commit -m 'Add AmazingFeature'`)
+3. 🚀 Poussez vers la branche (`git push origin feature/AmazingFeature`)
+4. 🎉 Ouvrez une Pull Request
+
+## 📄 Licence
+
+Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
 
 <div align="center">
 
-**[Documentation](docs.md)** • **[Contribution](CONTRIBUTING.md)** • **[Support](SUPPORT.md)**
+## 📧 Contact
 
-*Propulsé par l'énergie des trous noirs et le café ☕*
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AnARCHIS12)
+[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/)
+
+---
+
+<img src="public/images/liberchat-logo.svg" alt="Liberchat Logo" width="100"/>
+
+**Made with ❤️ by [AnARCHIS12](https://github.com/AnARCHIS12)**
 
 </div>

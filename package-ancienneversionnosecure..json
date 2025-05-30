@@ -1,16 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "discord-bot",
-  "version": "1.0.0",
-  "description": "Discord bot with server management capabilities",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "dependencies": {
-    "discord.js": "^14.14.1",
-    "dotenv": "^16.4.7"
-=======
   "name": "video-chat-app",
   "private": true,
   "version": "0.0.0",
@@ -26,13 +14,13 @@
     "@capacitor/android": "^7.0.1",
     "@capacitor/core": "^7.0.1",
     "@capacitor/ios": "^7.0.1",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
     "@types/simple-peer": "^9.11.8",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.18",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "express-rate-limit": "^7.5.0",
-    "helmet": "^8.1.0",
     "lucide-react": "^0.344.0",
     "postcss": "^8.4.35",
     "react": "^18.2.0",
@@ -42,15 +30,12 @@
     "socket.io-client": "^4.7.4",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
-    "vite": "^6.3.5",
-    "winston": "^3.11.0",
-    "xss": "^1.0.15"
+    "vite": "^5.0.12",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "@capacitor/cli": "^7.0.1",
     "@eslint/js": "^8.56.0",
-    "@types/react": "^19.1.6",
-    "@types/react-dom": "^19.1.5",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@typescript-eslint/parser": "^7.0.1",
     "concurrently": "^8.2.2",
@@ -59,6 +44,5 @@
     "eslint-plugin-react-refresh": "^0.4.11",
     "globals": "^15.9.0",
     "terser": "^5.36.0"
->>>>>>> 9afd512 (Premier commit : Initialisation du projet Liberchat)
   }
 }
