@@ -18,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout, isLoggedIn }) => {
       {isLoggedIn && onLogout && (
         <button
           onClick={onLogout}
-          className="px-3 py-1 sm:px-4 sm:py-2 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base font-medium rounded transition-colors"
+          className="px-2 py-1 sm:px-4 sm:py-2 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-base font-medium rounded transition-colors"
         >
           Déconnexion
         </button>
