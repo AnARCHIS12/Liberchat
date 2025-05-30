@@ -1,247 +1,169 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import ChatInput from './components/ChatInput';
-import ChatMessage from './components/ChatMessage';
-import Header from './components/Header';
-import { UserList } from './components/UserList';
-import './styles/Header.css';
+import WelcomeScreen from './WelcomeScreen';
+import ChatMessage from './ChatMessage';
+import ChatInput from './ChatInput';
+import VideoCall from './VideoCall';
+import UserList from './UserList';
+import Header from './Header';
 
 interface Message {
-  type: 'text' | 'file';
-  username: string;
+  type: 'text' | 'file' | 'system';
+  username?: string;
   content?: string;
   fileData?: string;
   fileType?: string;
-  fileName?: string;
   timestamp: number;
 }
 
-interface User {
+interface UserInfo {
   username: string;
   socketId: string;
-  isInCall: boolean;
 }
 
 function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
   const [username, setUsername] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
-  const [error, setError] = useState<string>('');
+  const [isInCall, setIsInCall] = useState(false);
+  const [users, setUsers] = useState<UserInfo[]>([]);
+  const [callingUser, setCallingUser] = useState<string>('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialisation du socket
   useEffect(() => {
-    console.log('Initialisation du socket...');
-    const socket = io({
-      path: '/socket.io',
-      transports: ['websocket'],
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+    const newSocket = io('http://localhost:3000');
+    setSocket(newSocket);
+
+    newSocket.on('connect', () => setIsConnected(true));
+    newSocket.on('disconnect', () => setIsConnected(false));
+
+    newSocket.on('chat message', (msg: Message) => {
+      setMessages(prev => [...prev, msg]);
     });
 
-    console.log('Socket connecté avec ID:', socket.id);
-    socket.on('connect', () => {
-      console.log('Connecté au serveur');
-      setError('');
+    newSocket.on('users', (userList: UserInfo[]) => {
+      setUsers(userList);
     });
 
-    socket.on('connect_error', (err) => {
-      console.error('Erreur de connexion socket:', err);
-      setError('Erreur de connexion au serveur');
+    newSocket.on('userJoined', (user: string) => {
+      setMessages(prev => [...prev, {
+        type: 'system',
+        content: `${user} a rejoint le chat`,
+        timestamp: Date.now()
+      }]);
     });
 
-    socket.on('disconnect', (reason) => {
-      console.log('Socket déconnecté, raison:', reason);
-    });
-
-    setSocket(socket);
-
-    return () => {
-      console.log('Nettoyage du socket...');
-      socket.close();
-    };
-  }, []);
-
-  // Gestion des messages et des événements
-  useEffect(() => {
-    if (!socket) return;
-
-    // Réception des messages initiaux et de la liste des utilisateurs
-    socket.on('init', (data: { messages: Message[], users: User[] }) => {
-      console.log('Données initiales reçues:', data);
-      setMessages(data.messages);
-      setUsers(data.users);
-    });
-
-    // Réception d'un nouveau message
-    socket.on('chat message', (message: Message) => {
-      console.log('Nouveau message reçu:', message);
-      setMessages(prevMessages => [...prevMessages, message]);
-    });
-
-    // Mise à jour de la liste des utilisateurs
-    socket.on('users', (updatedUsers: User[]) => {
-      console.log('Liste des utilisateurs mise à jour:', updatedUsers);
-      setUsers(updatedUsers);
-    });
-
-    socket.on('userJoined', (username: string) => {
-      console.log(`${username} a rejoint le chat`);
-    });
-
-    socket.on('userLeft', (username: string) => {
-      console.log(`${username} a quitté le chat`);
-    });
-
-    socket.on('registrationError', (error: string) => {
-      console.error('Erreur d\'enregistrement:', error);
-      setError(error);
-      setIsLoggedIn(false);
+    newSocket.on('userLeft', (user: string) => {
+      setMessages(prev => [...prev, {
+        type: 'system',
+        content: `${user} a quitté le chat`,
+        timestamp: Date.now()
+      }]);
+      // Si l'utilisateur qui part était en appel, on termine l'appel
+      if (user === callingUser) {
+        setIsInCall(false);
+        setCallingUser('');
+      }
     });
 
     return () => {
-      socket.off('init');
-      socket.off('chat message');
-      socket.off('users');
-      socket.off('userJoined');
-      socket.off('userLeft');
-      socket.off('registrationError');
+      newSocket.close();
     };
-  }, [socket]);
+  }, [callingUser]);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username.trim() || !socket) {
-      console.log('Erreur: pas de username ou pas de socket');
-      return;
-    }
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
-    console.log('Tentative de connexion avec username:', username);
-    socket.emit('register', username);
-    setIsLoggedIn(true);
-
-    socket.on('registrationError', (error: string) => {
-      console.error('Erreur de connexion:', error);
-      setError(error);
-      setIsLoggedIn(false);
-    });
+  const handleJoin = (name: string) => {
+    setUsername(name);
+    socket?.emit('register', name);
   };
 
-  const handleLogout = () => {
-    if (!socket) return;
-    socket.emit('logout');
-    setIsLoggedIn(false);
-    setUsername('');
-    setMessages([]);
-    setUsers([]);
-    setError('');
-  };
-
-  const sendMessage = (content: string) => {
-    if (!socket || !content.trim()) return;
-    
-    const message: Message = {
+  const handleSendMessage = (message: string) => {
+    const messageData: Message = {
       type: 'text',
       username,
-      content,
+      content: message,
       timestamp: Date.now()
     };
-    
-    socket.emit('chat message', message);
+    socket?.emit('chat message', messageData);
   };
 
-  const sendFile = async (file: File) => {
-    if (!socket) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const fileData = e.target?.result as string;
-      if (!fileData) return;
-      
-      socket.emit('file message', {
-        fileData,
-        fileType: file.type,
-        fileName: file.name
-      });
-    };
-    reader.readAsDataURL(file);
+  const handleSendFile = async (file: File) => {
+    try {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const fileData = reader.result as string;
+        const messageData: Message = {
+          type: 'file',
+          username,
+          fileData,
+          fileType: file.type,
+          timestamp: Date.now()
+        };
+        socket?.emit('chat message', messageData);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error processing file:', error);
+      alert('Error processing file');
+    }
   };
+
+  const handleCallUser = (userToCall: string) => {
+    setCallingUser(userToCall);
+    setIsInCall(true);
+  };
+
+  const handleEndCall = () => {
+    setIsInCall(false);
+    setCallingUser('');
+  };
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  if (!username) {
+    return <WelcomeScreen onJoin={handleJoin} />;
+  }
 
   return (
-    <div className="min-h-screen flex flex-col bg-black">
-      <Header onLogout={handleLogout} isLoggedIn={isLoggedIn} />
-      {!isLoggedIn ? (
-        // Page de connexion
-        <div className="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-black via-red-900 to-black">
-          <div className="w-full max-w-md space-y-8 p-4 sm:p-8 rounded-none bg-black/90 border-2 border-red-600">
-            <div className="text-center space-y-2">
-              <h1 className="text-4xl sm:text-5xl font-bold text-red-600 transform hover:scale-105 transition-transform duration-300" style={{ fontFamily: 'Impact, sans-serif' }}>
-                LIBERCHAT
-              </h1>
-              <div className="flex justify-center space-x-4 my-4">
-                <span className="text-2xl sm:text-3xl">☭</span>
-                <span className="text-2xl sm:text-3xl">Ⓐ</span>
-                <span className="text-2xl sm:text-3xl">⚑</span>
-              </div>
-              <p className="text-red-400 uppercase tracking-widest text-xs sm:text-sm">La communication libre pour tous</p>
-            </div>
-            
-            <form onSubmit={handleLogin} className="space-y-4 mt-8">
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="NOM DE CAMARADE"
-                  className="w-full px-3 py-2 sm:px-4 sm:py-3 bg-black border-2 border-red-600 text-red-100 placeholder-red-700 focus:outline-none focus:border-red-400 uppercase text-sm sm:text-base"
-                />
-              </div>
-              
-              <button
-                type="submit"
-                className="w-full py-3 sm:py-4 bg-red-600 hover:bg-red-700 text-white font-bold uppercase tracking-wider transition-all duration-200 transform hover:scale-105 focus:outline-none border-2 border-red-400 hover:border-red-300 text-sm sm:text-base"
-              >
-                Rejoindre la révolution
-              </button>
-            </form>
-
-            {error && (
-              <div className="mt-4 p-3 bg-red-900/50 border-l-4 border-red-600 text-red-200 text-xs sm:text-sm">
-                {error}
-              </div>
-            )}
-          </div>
-        </div>
-      ) : (
-        // Interface principale
-        <div className="flex-1 flex overflow-hidden">
-          {/* Liste des utilisateurs - visible sur ordinateur */}
-          <div className="hidden sm:flex">
-            <UserList
-              users={users}
-              currentUser={username}
-            />
-          </div>
-          {/* Zone principale de chat */}
-          <div className="flex-1 flex flex-col max-h-screen">
-            <div className="flex-1 overflow-y-auto px-2 sm:px-6 py-2 sm:py-4 space-y-2 sm:space-y-3">
-              {messages.map((message, index) => (
-                <ChatMessage
-                  key={index}
-                  message={message}
-                  isOwnMessage={message.username === username}
-                />
-              ))}
-            </div>
-            {/* Zone de saisie fixe en bas */}
-            <div className="border-t-2 border-red-900 bg-black px-2 sm:px-6 py-1 sm:py-2 mt-auto">
-              <ChatInput onSendMessage={sendMessage} onSendFile={sendFile} />
-            </div>
-          </div>
-        </div>
+    <>
+      {isInCall && socket && (
+        <VideoCall
+          socket={socket}
+          username={username}
+          callingUser={callingUser}
+          onClose={handleEndCall}
+        />
       )}
-    </div>
+      <div className="h-screen flex flex-col bg-gray-900 text-white">
+        <Header />
+        <div className="flex-1 flex overflow-hidden">
+          <UserList 
+            users={users} 
+            currentUser={username}
+            onCallUser={handleCallUser}
+          />
+          <div className="flex-1 flex flex-col">
+            <main className="flex-1 overflow-y-auto p-4 space-y-4">
+              {messages.map((msg, index) => (
+                <ChatMessage key={index} message={msg} />
+              ))}
+              <div ref={messagesEndRef} />
+            </main>
+            <ChatInput onSendMessage={handleSendMessage} onSendFile={handleSendFile} />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
