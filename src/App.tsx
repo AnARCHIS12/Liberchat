@@ -132,6 +132,10 @@ function App() {
     if (!socket) return;
     socket.emit('logout');
     setIsLoggedIn(false);
+    setUsername('');
+    setMessages([]);
+    setUsers([]);
+    setError('');
   };
 
   const sendMessage = (content: string) => {
@@ -165,83 +169,78 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <Header />
-      <div className="chat-container">
-        {!isLoggedIn ? (
-          // Page de connexion
-          <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-black via-red-900 to-black">
-            <div className="w-full max-w-md space-y-8 p-4 sm:p-8 rounded-none bg-black/90 border-2 border-red-600">
-              <div className="text-center space-y-2">
-                <h1 className="text-4xl sm:text-5xl font-bold text-red-600 transform hover:scale-105 transition-transform duration-300" style={{ fontFamily: 'Impact, sans-serif' }}>
-                  LIBERCHAT
-                </h1>
-                <div className="flex justify-center space-x-4 my-4">
-                  <span className="text-2xl sm:text-3xl">☭</span>
-                  <span className="text-2xl sm:text-3xl">Ⓐ</span>
-                  <span className="text-2xl sm:text-3xl">⚑</span>
-                </div>
-                <p className="text-red-400 uppercase tracking-widest text-xs sm:text-sm">La communication libre pour tous</p>
+    <div className="min-h-screen flex flex-col bg-black">
+      <Header onLogout={handleLogout} isLoggedIn={isLoggedIn} />
+      {!isLoggedIn ? (
+        // Page de connexion
+        <div className="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-black via-red-900 to-black">
+          <div className="w-full max-w-md space-y-8 p-4 sm:p-8 rounded-none bg-black/90 border-2 border-red-600">
+            <div className="text-center space-y-2">
+              <h1 className="text-4xl sm:text-5xl font-bold text-red-600 transform hover:scale-105 transition-transform duration-300" style={{ fontFamily: 'Impact, sans-serif' }}>
+                LIBERCHAT
+              </h1>
+              <div className="flex justify-center space-x-4 my-4">
+                <span className="text-2xl sm:text-3xl">☭</span>
+                <span className="text-2xl sm:text-3xl">Ⓐ</span>
+                <span className="text-2xl sm:text-3xl">⚑</span>
+              </div>
+              <p className="text-red-400 uppercase tracking-widest text-xs sm:text-sm">La communication libre pour tous</p>
+            </div>
+            
+            <form onSubmit={handleLogin} className="space-y-4 mt-8">
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="NOM DE CAMARADE"
+                  className="w-full px-3 py-2 sm:px-4 sm:py-3 bg-black border-2 border-red-600 text-red-100 placeholder-red-700 focus:outline-none focus:border-red-400 uppercase text-sm sm:text-base"
+                />
               </div>
               
-              <form onSubmit={handleLogin} className="space-y-4 mt-8">
-                <div className="space-y-2">
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="NOM DE CAMARADE"
-                    className="w-full px-3 py-2 sm:px-4 sm:py-3 bg-black border-2 border-red-600 text-red-100 placeholder-red-700 focus:outline-none focus:border-red-400 uppercase text-sm sm:text-base"
-                  />
-                </div>
-                
-                <button
-                  type="submit"
-                  className="w-full py-3 sm:py-4 bg-red-600 hover:bg-red-700 text-white font-bold uppercase tracking-wider transition-all duration-200 transform hover:scale-105 focus:outline-none border-2 border-red-400 hover:border-red-300 text-sm sm:text-base"
-                >
-                  Rejoindre la révolution
-                </button>
-              </form>
+              <button
+                type="submit"
+                className="w-full py-3 sm:py-4 bg-red-600 hover:bg-red-700 text-white font-bold uppercase tracking-wider transition-all duration-200 transform hover:scale-105 focus:outline-none border-2 border-red-400 hover:border-red-300 text-sm sm:text-base"
+              >
+                Rejoindre la révolution
+              </button>
+            </form>
 
-              {error && (
-                <div className="mt-4 p-3 bg-red-900/50 border-l-4 border-red-600 text-red-200 text-xs sm:text-sm">
-                  {error}
-                </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          // Interface principale
-          <div className="flex h-screen bg-black">
-            {/* Liste des utilisateurs - visible sur ordinateur */}
-            <div className="hidden sm:flex">
-              <UserList
-                users={users}
-                currentUser={username}
-              />
-            </div>
-            {/* Zone principale de chat */}
-            <div className="flex-1 flex flex-col min-h-screen bg-black">
-              {/* <Header /> supprimé ici pour éviter le doublon */}
-              <div className="flex-1 flex flex-col overflow-hidden bg-black">
-                <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
-                  {messages.map((message, index) => (
-                    <ChatMessage
-                      key={index}
-                      message={message}
-                      isOwnMessage={message.username === username}
-                    />
-                  ))}
-                </div>
-                {/* Zone de saisie fixe en bas */}
-                <div className="border-t-2 border-red-900 bg-black px-6 py-2">
-                  <ChatInput onSendMessage={sendMessage} onSendFile={sendFile} />
-                </div>
+            {error && (
+              <div className="mt-4 p-3 bg-red-900/50 border-l-4 border-red-600 text-red-200 text-xs sm:text-sm">
+                {error}
               </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        // Interface principale
+        <div className="flex-1 flex overflow-hidden">
+          {/* Liste des utilisateurs - visible sur ordinateur */}
+          <div className="hidden sm:flex">
+            <UserList
+              users={users}
+              currentUser={username}
+            />
+          </div>
+          {/* Zone principale de chat */}
+          <div className="flex-1 flex flex-col">
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
+              {messages.map((message, index) => (
+                <ChatMessage
+                  key={index}
+                  message={message}
+                  isOwnMessage={message.username === username}
+                />
+              ))}
+            </div>
+            {/* Zone de saisie fixe en bas */}
+            <div className="border-t-2 border-red-900 bg-black px-6 py-2">
+              <ChatInput onSendMessage={sendMessage} onSendFile={sendFile} />
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
