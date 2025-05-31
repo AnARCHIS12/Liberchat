@@ -1,8 +1,16 @@
 <div align="center">
 
-# 🚀 Liberchat 
+# 🚩✊ Liberchat — La Commune Numérique
 
 <img src="public/images/liberchat-logo.svg" alt="Liberchat Logo" width="200"/>
+
+<p align="center" style="font-size:1.2em; color:#ff2800; font-weight:bold;">
+« Pour l’autogestion, la solidarité et la liberté numérique. Un chat libre, par et pour le peuple. »
+</p>
+
+[![Anticapitaliste](https://img.shields.io/badge/Anticapitaliste-✊-red?style=for-the-badge)](#)
+[![Logiciel Libre](https://img.shields.io/badge/Logiciel_Libre-100%25-black?style=for-the-badge)](#)
+[![Anarcho-syndicaliste](https://img.shields.io/badge/Anarcho--syndicaliste-Noir_&_Rouge-black?style=for-the-badge&labelColor=ff2800)](#)
 
 [![Version](https://img.shields.io/badge/Version-Beta%201.0.0-red?style=for-the-badge)](#)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
@@ -10,13 +18,23 @@
 [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-**Une application de chat en temps réel nouvelle génération**
+**Un chat en temps réel, autogéré, horizontal, pour la Commune numérique.**
 
 [📝 Documentation](#-documentation) | [🤝 Contribuer](#-contribution) | [📧 Contact](#-contact)
 
 ---
 
 </div>
+
+## 🏴 Pourquoi un chat anarcho-syndicaliste ?
+
+> « La communication libre est une arme. Organisons-nous, partageons, résistons ! »
+
+- **Aucune hiérarchie, pas de chef** : tout le monde a le même pouvoir.
+- **Respect de la vie privée** : pas de tracking, pas de pub, pas de collecte de données.
+- **Code ouvert, transparent, modifiable** : fork, partage, autogestion.
+- **Solidarité et entraide** : entraide technique et humaine, support communautaire.
+- **Hébergement décentralisé possible** : pour ne dépendre d’aucun géant du web.
 
 ## ✨ Caractéristiques Principales
 
@@ -185,29 +203,27 @@ Start Command: npm start
 
 ## 🤝 Contribution
 
-Nous adorons les contributions ! Voici comment participer :
+> « Le code appartient à la communauté. Rejoins-nous, propose, améliore, partage ! »
 
-1. 🔧 Créez une branche pour votre fonctionnalité (`git checkout -b feature/AmazingFeature`)
-2. 💫 Commitez vos changements (`git commit -m 'Add AmazingFeature'`)
-3. 🚀 Poussez vers la branche (`git push origin feature/AmazingFeature`)
-4. 🎉 Ouvrez une Pull Request
+Nous adorons les contributions collectives ! Voici comment participer :
+
+1. 🔧 Crée une branche pour ta fonctionnalité (`git checkout -b feature/maFonctionMilitante`)
+2. 💫 Committe tes changements (`git commit -m 'Ajout de ma fonctionnalité'`)
+3. 🚀 Pousse vers la branche (`git push origin feature/maFonctionMilitante`)
+4. 🎉 Ouvre une Pull Request (PR) — tout le monde peut relire et discuter
+
+**Aucune contribution n’est trop petite, tout le monde est bienvenu·e !**
 
 ## 📄 Licence
 
-Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
+Distribué sous la licence MIT, avec préambule militant. Voir `LICENSE` pour plus d'informations.
 
 <div align="center">
-
-## 📧 Contact
-
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](#)
-[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/)
 
 ---
 
 <img src="public/images/liberchat-logo.svg" alt="Liberchat Logo" width="100"/>
 
-**Made with ❤️ by Liberchat Team**
+**Fait par et pour la communauté, dans l’esprit de la Commune numérique.**
 
 </div>
