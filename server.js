@@ -45,20 +45,26 @@ app.use(cors({
   origin: [
     'https://liberchat-3-0-1.onrender.com',
     'http://localhost:5173',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://liberchat.onrender.com', // fallback Render
+    'capacitor://localhost', // pour mobile
+    'http://localhost'
   ],
   methods: ['GET', 'POST'],
   credentials: true
 }));
 
-const server = createServer(app); // pour dev
+const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
     origin: [
       'https://liberchat-3-0-1.onrender.com',
       'http://localhost:5173',
-      'http://localhost:3000'
+      'http://localhost:3000',
+      'https://liberchat.onrender.com',
+      'capacitor://localhost',
+      'http://localhost'
     ],
     methods: ["GET", "POST"],
     credentials: true

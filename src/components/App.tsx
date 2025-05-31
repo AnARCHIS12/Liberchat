@@ -31,8 +31,18 @@ function App() {
 
   useEffect(() => {
     // Utilisation d'une URL dynamique pour le socket selon l'environnement
-    const socketUrl = import.meta.env.DEV ? '' : 'http://localhost:3000';
-    const newSocket = io(socketUrl);
+    let socketUrl = '';
+    if (import.meta.env.DEV) {
+      socketUrl = '';
+    } else if (window.location.hostname.endsWith('onrender.com')) {
+      socketUrl = `https://${window.location.hostname}`;
+    } else {
+      socketUrl = 'http://localhost:3000';
+    }
+    const newSocket = io(socketUrl, {
+      transports: ['websocket', 'polling'],
+      withCredentials: true
+    });
     setSocket(newSocket);
 
     newSocket.on('connect', () => setIsConnected(true));
