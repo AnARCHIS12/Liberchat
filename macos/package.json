@@ -1,0 +1,60 @@
+{
+  "name": "liberchat",
+  "version": "1.0.0",
+  "description": "Application de messagerie libre et sécurisée",
+  "main": "../main.js",
+  "scripts": {
+    "start": "electron ..",
+    "build": "electron-builder build --mac",
+    "build:dmg": "electron-builder build --mac dmg",
+    "build:zip": "electron-builder build --mac zip"
+  },
+  "build": {
+    "appId": "org.unionlibertaire.liberchat",
+    "productName": "Liberchat",
+    "copyright": "Copyright © 2025 Union Libertaire",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "mac": {
+      "category": "public.app-category.social-networking",
+      "target": ["dmg", "zip"],
+      "icon": "build/icon.icns",
+      "darkModeSupport": true,
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+      "background": "build/background.png",
+      "icon": "build/icon.icns",
+      "iconSize": 128,
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 400
+      },
+      "title": "${productName} ${version}"
+    }
+  },
+  "author": "Union Libertaire",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "electron": "^27.1.0",
+    "electron-builder": "^24.6.4"
+  }
+}
