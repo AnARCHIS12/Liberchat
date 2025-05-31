@@ -8,11 +8,12 @@ import { UserList } from './components/UserList';
 import Header from './components/Header';
 
 interface Message {
-  type: 'text' | 'file' | 'system';
+  type: 'text' | 'file' | 'system' | 'gif';
   username?: string;
   content?: string;
   fileData?: string;
   fileType?: string;
+  gifUrl?: string;
   timestamp: number;
 }
 
@@ -35,7 +36,10 @@ function App() {
     const newSocket = io('http://localhost:3000');
     setSocket(newSocket);
 
-    newSocket.on('connect', () => setIsConnected(true));
+    newSocket.on('connect', () => {
+      setIsConnected(true);
+      console.log('Socket connecté, id:', newSocket.id);
+    });
     newSocket.on('disconnect', () => setIsConnected(false));
 
     newSocket.on('chat message', (msg: Message) => {
@@ -122,6 +126,26 @@ function App() {
     setCallingUser('');
   };
 
+  const handleSendGif = (gifMessage: string) => {
+    try {
+      const gifData = JSON.parse(gifMessage);
+      const messageData: Message = {
+        ...gifData,
+        username, // Ajout du nom d'utilisateur
+        timestamp: Date.now()
+      };
+      console.log('Socket prêt ?', !!socket, 'Socket id:', socket?.id);
+      if (!socket) {
+        alert('Socket non initialisé !');
+        return;
+      }
+      console.log('Envoi du GIF au serveur:', messageData);
+      socket.emit('chat message', messageData);
+    } catch (error) {
+      console.error('Error processing GIF:', error);
+    }
+  };
+
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
@@ -155,11 +179,20 @@ function App() {
           <div className="flex-1 flex flex-col">
             <main className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((msg, index) => (
-                <ChatMessage key={index} message={msg} />
+                <ChatMessage 
+                  key={index} 
+                  message={msg} 
+                  isOwnMessage={msg.username === username}
+                />
               ))}
               <div ref={messagesEndRef} />
             </main>
-            <ChatInput onSendMessage={handleSendMessage} onSendFile={handleSendFile} />
+            <ChatInput 
+              onSendMessage={handleSendMessage} 
+              onSendFile={handleSendFile}
+              onSendGif={handleSendGif}
+              isConnected={isConnected} 
+            />
           </div>
         </div>
       </div>

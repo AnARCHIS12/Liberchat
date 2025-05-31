@@ -167,13 +167,38 @@ io.on('connection', (socket) => {
     const user = users.get(socket.id);
     if (!user) return;
 
+    console.log('Message reçu:', { type: typeof message, content: message });
+
+    // Si le message est une chaîne JSON (cas des GIFs), on le parse
+    if (typeof message === 'string') {
+      try {
+        message = JSON.parse(message);
+        console.log('Message parsé:', message);
+      } catch (e) {
+        logger.error('Erreur de parsing JSON:', e);
+        console.error('Erreur de parsing JSON:', e, 'Message reçu:', message);
+        return;
+      }
+    }
+
     message.username = user.username;
-    message.timestamp = Date.now();
-    message.text = xss(message.text); // Nettoyage XSS
+    
+    if (message.type === 'text') {
+      message.content = xss(message.content); // Nettoyage XSS pour les messages texte
+    } else if (message.type === 'gif') {
+      console.log('Message GIF reçu:', message);
+      // Validation de l'URL du GIF (doit provenir de Giphy)
+      if (!message.gifUrl || !message.gifUrl.match(/^https:\/\/(media\d*\.)?giphy\.com\/media\/.+/)) {
+        logger.error('URL de GIF non valide:', message.gifUrl);
+        console.error('URL de GIF non valide:', message.gifUrl);
+        return;
+      }
+    }
 
     messages.push(message);
     io.emit('chat message', message);
-    logger.info(`Message reçu de ${user.username}`);
+    console.log('Message envoyé à tous les clients:', message);
+    logger.info(`Message ${message.type} reçu de ${user.username}`);
   });
 
   // Gestion des fichiers

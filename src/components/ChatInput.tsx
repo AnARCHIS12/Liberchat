@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import debounce from 'lodash/debounce';
-import { searchGifs } from '../config/giphy';
+import { searchGifs, getTrendingGifs } from '../config/giphy';
 
 // Cache pour les GIFs
 const gifCache = new Map<string, any[]>();
@@ -11,10 +11,11 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
   onSendFile: (file: File) => void;
+  onSendGif: (gifMessage: string) => void;
   isConnected: boolean;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, isConnected }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSendGif, isConnected }) => {
   const [message, setMessage] = useState('');
   const [showEmoji, setShowEmoji] = useState(false);
   const [showGif, setShowGif] = useState(false);
@@ -106,8 +107,25 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, isConn
 
   // Effet pour la recherche de GIFs
   useEffect(() => {
-    if (showGif && gifQuery) {
-      debouncedGifSearch(gifQuery, page);
+    if (showGif) {
+      if (gifQuery) {
+        debouncedGifSearch(gifQuery, page);
+      } else {
+        // Charger les GIFs tendance si aucune recherche n'est en cours
+        const loadTrending = async () => {
+          try {
+            setIsLoadingGifs(true);
+            const results = await getTrendingGifs(GIFS_PER_PAGE, page * GIFS_PER_PAGE);
+            setGifResults(prev => page === 0 ? results : [...prev, ...results]);
+          } catch (error) {
+            console.error('Erreur lors du chargement des GIFs tendance:', error);
+            setGifError('Erreur lors du chargement des GIFs');
+          } finally {
+            setIsLoadingGifs(false);
+          }
+        };
+        loadTrending();
+      }
     }
     return () => debouncedGifSearch.cancel();
   }, [gifQuery, page, showGif]);
@@ -163,11 +181,36 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, isConn
 
 
   const handleGifSelect = (gif: any) => {
-    onSendMessage(gif.images.original.url);
+    if (!isConnected) {
+      console.error('Non connecté au serveur');
+      return;
+    }
+
+    alert('GIF sélectionné, tentative d’envoi !');
+    console.log('GIF sélectionné:', gif);
+
+    if (!gif || !gif.images || !gif.images.original || !gif.images.original.url) {
+      console.error('Format de GIF invalide:', gif);
+      return;
+    }
+
+    const messageData = {
+      type: 'gif',
+      gifUrl: gif.images.original.url,
+      content: '',
+      timestamp: Date.now()
+    };
+    
+    console.log('Envoi du message GIF:', messageData);
+    if (typeof onSendGif === 'function') {
+      onSendGif(JSON.stringify(messageData));
+    } else {
+      alert('Erreur : la fonction onSendGif n’est pas définie !');
+      console.error('onSendGif n’est pas une fonction', onSendGif);
+    }
     setShowGif(false);
-    setGifResults([]);
     setGifQuery('');
-    setGifError(null);
+    setGifResults([]);
   };
 
   return (

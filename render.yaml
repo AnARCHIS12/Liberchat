@@ -9,5 +9,7 @@ services:
         value: production
       - key: PORT
         value: 3000
+      - key: VITE_GIPHY_API_KEY
+        value: GlVGYHkr3WSBnllca54iNt0yFbjz7L65
     healthCheckPath: /
     autoDeploy: true

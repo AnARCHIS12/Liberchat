@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { WelcomeScreen } from './WelcomeScreen';
 import ChatMessage from './ChatMessage';
-import ChatInput from './ChatInput';
 import { UserList } from './UserList';
 import Header from './Header';
 
@@ -157,12 +156,6 @@ function App() {
             ))}
             <div ref={messagesEndRef} />
           </main>
-          <ChatInput 
-            onSendMessage={handleSendMessage} 
-            onSendFile={handleSendFile} 
-            onSendGif={() => {}} 
-            isConnected={isConnected} 
-          />
         </div>
       </div>
     </div>

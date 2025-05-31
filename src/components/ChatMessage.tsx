@@ -1,12 +1,13 @@
 import React from 'react';
 
 interface Message {
-  type: 'text' | 'file' | 'system';
+  type: 'text' | 'file' | 'system' | 'gif';
   username?: string;
   content?: string;
   fileData?: string;
   fileType?: string;
   fileName?: string;
+  gifUrl?: string;
   timestamp: number;
 }
 
@@ -25,28 +26,22 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage }) => {
 
   const renderContent = () => {
     if (message.type === 'text') {
-      // Affichage GIF si le message est une URL Giphy (tous formats)
-      if (
-        message.content &&
-        message.content.match(
-          /^https:\/\/(media\d*\.)?giphy\.com\/media\/.+\/giphy\.gif(\?.*)?$/
-        )
-      ) {
-        return (
-          <img
-            src={message.content}
-            alt="GIF"
-            className="max-w-[160px] sm:max-w-[220px] rounded-lg shadow-lg border-2 border-red-700 bg-black animate-fadeIn"
-            loading="lazy"
-            onError={(e) => {
-              const img = e.target as HTMLImageElement;
-              img.onerror = null;
-              img.src = message.content?.replace(/\.gif$/, '_s.gif') || '';
-            }}
-          />
-        );
-      }
       return <p className="break-words text-sm sm:text-base font-mono text-white">{message.content}</p>;
+    } else if (message.type === 'gif' && message.gifUrl) {
+      return (
+        <img
+          src={message.gifUrl}
+          alt="GIF"
+          className="max-w-[160px] sm:max-w-[220px] rounded-lg shadow-lg border-2 border-red-700 bg-black animate-fadeIn"
+          loading="lazy"
+          onError={(e) => {
+            const img = e.target as HTMLImageElement;
+            img.onerror = null;
+            // Essayer la version statique si l'animation échoue
+            img.src = message.gifUrl?.replace(/\.gif$/, '_s.gif') || '';
+          }}
+        />
+      );
     } else if (message.type === 'file') {
       if (message.fileType?.startsWith('image/')) {
         return (
