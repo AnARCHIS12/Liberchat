@@ -173,11 +173,11 @@ Start Command: npm start
 
 ### Écran d'accueil
 
-<img src="public/images/liberchat-logo.svg" alt="Aperçu accueil LiberChat" width="350" style="border-radius: 12px; box-shadow: 0 2px 12px #0004; margin-bottom: 1em;" />
+<img src="Capture d’écran du 2025-05-31 13-38-11.png" alt="Aperçu accueil LiberChat" width="350" style="border-radius: 12px; box-shadow: 0 2px 12px #0004; margin-bottom: 1em;" />
 
 ### Interface de chat
 
-<img src="public/images/liberchat-logo.svg" alt="Aperçu chat LiberChat" width="350" style="border-radius: 12px; box-shadow: 0 2px 12px #0004;" />
+<img src="Capture d’écran du 2025-05-31 13-38-36.png" alt="Aperçu chat LiberChat" width="350" style="border-radius: 12px; box-shadow: 0 2px 12px #0004;" />
 
 </div>
 
