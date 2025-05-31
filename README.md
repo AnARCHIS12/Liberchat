@@ -69,7 +69,10 @@
   - Messages instantanés
   - Indicateur de frappe
   - Historique des messages
-  - Emojis et réactions
+  - Support complet des emojis
+  - Recherche et envoi de GIFs animés
+  - Cache optimisé pour les GIFs
+  - Interface responsive mobile
 
 - 👥 **Gestion des Utilisateurs**
   - Liste des utilisateurs en ligne
@@ -81,12 +84,37 @@
   - Connexions sécurisées
   - Authentification utilisateur
   - Protection contre le spam
+  - Variables d'environnement sécurisées
 
 - 🎨 **Interface**
   - Thème sombre élégant
   - Animations fluides
-  - Interface intuitive
+  - Interface intuitive et responsive
   - Style moderne
+  - Sélecteur d'emojis intégré
+  - Recherche de GIFs avec preview
+  - Optimisations mobile/desktop
+
+### 🖼️ Médias et Expressions
+
+- 😀 **Support Complet des Emojis**
+  - Sélecteur d'emojis intuitif
+  - Catégories organisées
+  - Recherche rapide
+  - Thème sombre intégré
+
+- 🎭 **GIFs Animés**
+  - Recherche instantanée de GIFs
+  - Prévisualisation en temps réel
+  - Chargement progressif
+  - Cache intelligent (5 minutes)
+  - Scroll infini
+  - Optimisé pour le mobile
+
+- 📎 **Partage de Fichiers**
+  - Support des images
+  - Vérification de taille
+  - Prévisualisation intégrée
 
 ## 📚 Documentation
 
@@ -94,6 +122,24 @@
 - [Guide d'utilisation](docs/Utilisation.md)
 - [FAQ](docs/FAQ.md)
 - [Guide de contribution](docs/Contribution.md)
+
+## 🔧 Configuration
+
+### Variables d'Environnement
+
+Créez un fichier `.env` à la racine du projet avec les variables suivantes :
+
+```env
+# API Giphy pour les GIFs (obligatoire pour la fonctionnalité GIF)
+VITE_GIPHY_API_KEY=votre_clé_api_giphy
+```
+
+Pour obtenir une clé API Giphy :
+1. Visitez [Giphy Developers](https://developers.giphy.com/)
+2. Créez un compte
+3. Créez une nouvelle application
+4. Copiez la clé API fournie
+5. Collez-la dans votre fichier `.env`
 
 ## 🚀 Démarrage Rapide
 

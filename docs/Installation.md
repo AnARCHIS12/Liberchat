@@ -27,12 +27,36 @@ cd Liberchat-3.0
 npm install
 ```
 
-3. Lancez le serveur de développement :
+3. Configurez les variables d'environnement :
+   - Créez un fichier `.env` à la racine du projet
+   - Ajoutez votre clé API Giphy :
+   ```env
+   VITE_GIPHY_API_KEY=votre_clé_api_giphy
+   ```
+   Pour obtenir une clé API Giphy :
+   - Visitez [Giphy Developers](https://developers.giphy.com/)
+   - Créez un compte développeur
+   - Créez une nouvelle application
+   - Copiez la clé API fournie
+
+4. Lancez le serveur de développement :
 ```bash
 npm run dev
 ```
 
-4. Ouvrez votre navigateur à l'adresse : `http://localhost:5173`
+5. Ouvrez votre navigateur à l'adresse : `http://localhost:5173`
+
+## 🌐 Déploiement sur Render
+
+1. Dans votre tableau de bord Render :
+   - Créez un nouveau Web Service
+   - Liez votre repository GitHub
+   - Dans l'onglet "Environment", ajoutez la variable :
+     - `VITE_GIPHY_API_KEY`: Votre clé API Giphy
+
+2. Configurez le build :
+   - Build Command : `npm install && npm run build`
+   - Start Command : `npm run start`
 
 ## ⚠️ Résolution des problèmes courants
 
@@ -45,3 +69,9 @@ npm run dev
 - Vérifiez que Node.js est bien installé : `node --version`
 - Vérifiez que toutes les dépendances sont installées : `npm install`
 - Vérifiez qu'aucun autre service n'utilise le port 5173
+
+### Les GIFs ne s'affichent pas
+- Vérifiez que votre clé API Giphy est correctement configurée dans `.env`
+- Vérifiez que le fichier `.env` est bien à la racine du projet
+- Sur Render, vérifiez que la variable d'environnement est bien configurée
+- Vérifiez la console du navigateur pour les erreurs éventuelles
