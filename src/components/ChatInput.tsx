@@ -87,13 +87,13 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
           query: query
         });
         
-        let errorMessage = 'Erreur lors de la recherche de GIFs.';
+        let errorMessage = '❌ Erreur lors de la recherche de GIFs';
         if (error.message.includes('API Giphy non configurée')) {
-          errorMessage = 'Configuration Giphy manquante.';
+          errorMessage = '⚠️ Configuration Giphy manquante';
         } else if (error.message.includes('429')) {
-          errorMessage = 'Trop de requêtes, veuillez réessayer plus tard.';
+          errorMessage = '🕒 Trop de requêtes, veuillez réessayer plus tard';
         } else if (error.message.includes('403')) {
-          errorMessage = 'Problème d\'authentification Giphy.';
+          errorMessage = '🔑 Problème d\'authentification Giphy';
         }
 
         setGifError(errorMessage);
@@ -226,12 +226,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
         <button
           type="button"
           onClick={() => {
-            setShowGif(v => !v);
-            if (!showGif) {
-              setPage(0);
-              setGifResults([]);
-              setGifError(null);
-            }
+            alert("Fonctionnalité GIF en cours de développement");
           }}
           className="flex-shrink-0 p-2 h-10 bg-black border-2 border-white rounded-lg hover:bg-red-700/20 transition-colors"
         >
