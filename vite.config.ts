@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    port: 5173, // Changement du port pour éviter les conflits
+    port: 5173,
     proxy: {
       '/socket.io': {
         target: 'http://localhost:3000',
@@ -16,10 +16,12 @@ export default defineConfig({
   build: {
     sourcemap: true,
     minify: 'terser',
+    chunkSizeWarningLimit: 1000, // Augmentation de la limite à 1000 kB
     rollupOptions: {
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
+          'socket-vendor': ['socket.io-client'],
           'video-vendor': ['simple-peer'],
           'emoji-vendor': ['@emoji-mart/data', '@emoji-mart/react']
         },
@@ -32,10 +34,16 @@ export default defineConfig({
         }
       }
     },
-    cssCodeSplit: true
+    cssCodeSplit: true,
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    }
   },
   optimizeDeps: {
-    include: ['emoji-mart'],
+    include: ['emoji-mart', 'socket.io-client'],
     exclude: ['lucide-react']
   },
   define: {
