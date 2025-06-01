@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liberchat - QR Code Android</title>
+    <link rel="icon" type="image/png" href="assets/icon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .qr-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: var(--background-color);
+        }
+
+        .qr-box {
+            background: var(--secondary-color);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .qr-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+        }
+
+        .qr-code {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .qr-code img {
+            max-width: 250px;
+            height: auto;
+            border: 8px solid white;
+            border-radius: 10px;
+        }
+
+        .qr-instructions {
+            margin: 2rem 0;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .download-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-color);
+            color: var(--text-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .download-button:hover {
+            transform: translateY(-2px);
+            background: var(--hover-color);
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="assets/icon.png" alt="Liberchat Logo" class="logo-img">
+                <span>Liberchat</span>
+            </div>
+            <ul class="nav-links">
+            </ul>
+        </div>
+    </nav>
+    <div class="qr-container">
+        <div class="qr-box">
+            <h1 class="qr-title">Télécharger Liberchat pour Android</h1>
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://github.com/AnARCHIS12/Liberchat-3.0/releases/download/beta-1.0.0/liberchat-1.0.0-beta-a-only.apk" alt="QR Code Liberchat Android">
+            </div>
+            <p class="qr-instructions">
+                1. Scannez ce QR code avec votre appareil Android<br>
+                2. Téléchargez l'APK<br>
+                3. Ouvrez le fichier pour installer Liberchat
+            </p>
+            <a href="https://github.com/AnARCHIS12/Liberchat-3.0/releases/download/beta-1.0.0/liberchat-1.0.0-beta-a-only.apk" class="download-button">
+                <i class="fas fa-download"></i>
+                Télécharger l'APK directement
+            </a>
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Retour à l'accueil
+            </a>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
