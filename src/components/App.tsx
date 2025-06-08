@@ -120,34 +120,44 @@ function App() {
     socket?.emit('chat message', messageData);
   };
 
-  // Correction du type de la prop onSendFile pour accepter un File natif
+  // Correction du type de la prop onSendFile pour chiffrer les fichiers en E2EE
   const handleSendFile = async (file: File) => {
     if (!socket || !isConnected) {
       alert('Connexion au serveur non établie.');
       return;
     }
+    if (!symmetricKey) {
+      alert('Clé de chiffrement non initialisée.');
+      return;
+    }
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       const fileData = reader.result as string;
+      // Chiffrement du fichier (base64 ou ArrayBuffer)
+      let encryptedFile;
+      if (window.crypto && window.crypto.subtle && typeof symmetricKey !== 'string') {
+        // Web Crypto : on chiffre le contenu base64 comme un message
+        encryptedFile = await encryptMessageE2EE(fileData, symmetricKey);
+      } else if (typeof symmetricKey === 'string') {
+        encryptedFile = encryptMessageFallback(fileData, symmetricKey);
+      } else {
+        alert('Aucune méthode de chiffrement disponible pour les fichiers.');
+        return;
+      }
       const messageData: Message = {
         type: 'file',
         username,
-        fileData,
+        fileData: JSON.stringify(encryptedFile),
         fileType: file.type,
         fileName: file.name,
         timestamp: Date.now()
       };
       socket.emit('chat message', messageData);
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file); // On lit le fichier en base64 pour compatibilité
   };
 
-  const handleLogout = () => {
-    setUsername('');
-    setMessages([]);
-    // Optionnel : socket?.disconnect();
-  };
-
+  // Déchiffrement lors de la réception d'un fichier
   useEffect(() => {
     if (!socket || !symmetricKey) return;
     const handleChatMessage = async (msg: Message) => {
@@ -170,6 +180,23 @@ function App() {
           // Si déchiffrement impossible, on affiche le contenu brut
         }
         msg.content = decrypted;
+      } else if (msg.type === 'file' && msg.fileData) {
+        let decryptedFile = msg.fileData;
+        try {
+          if (
+            typeof msg.fileData === 'string' &&
+            msg.fileData.trim().startsWith('{') &&
+            msg.fileData.trim().endsWith('}')
+          ) {
+            const encrypted = JSON.parse(msg.fileData);
+            if (encrypted && encrypted.iv && encrypted.content) {
+              decryptedFile = await decryptMessageE2EE(encrypted, symmetricKey);
+            }
+          }
+        } catch (e) {
+          // Si déchiffrement impossible, on affiche le contenu brut
+        }
+        msg.fileData = decryptedFile;
       }
       setMessages((prev: Message[]) => [...prev, msg]);
     };
@@ -196,6 +223,13 @@ function App() {
   const handleAccessAfterShare = () => {
     setKeyPrompt(false);
     setGeneratedKey(null); // Réinitialise l'état pour éviter tout effet de bord
+  };
+
+  // Déconnexion utilisateur
+  const handleLogout = () => {
+    setUsername('');
+    setMessages([]);
+    // Optionnel : socket?.disconnect();
   };
 
   // Génération d'une "clé" utilisable par crypto-js (string hex) à partir du mot de passe
