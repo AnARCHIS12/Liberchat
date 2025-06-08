@@ -70,8 +70,6 @@
   - Indicateur de frappe
   - Historique des messages
   - Support complet des emojis
-  - Recherche et envoi de GIFs animés
-  - Cache optimisé pour les GIFs
   - Interface responsive mobile
 
 - 👥 **Gestion des Utilisateurs**
