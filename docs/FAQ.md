@@ -14,7 +14,7 @@ R: Non, les appels vidéo ne sont pas supportés dans la version actuelle.
 ## 🔧 Questions techniques
 
 ### Q: Sur quels appareils puis-je utiliser Liberchat ?
-R: Actuellement, Liberchat est disponible sur Android via l'APK et sur navigateur web via le site.
+R: Actuellement, Liberchat est disponible sur Android via l'APK , Linux , win 10-11 et sur navigateur web via le site.
 
 ### Q: Comment mettre à jour l'application ?
 R: Téléchargez et installez la dernière version depuis la [page des releases](https://github.com/AnARCHIS12/Liberchat-3.0/releases).
