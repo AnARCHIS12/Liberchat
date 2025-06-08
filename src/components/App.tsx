@@ -229,8 +229,26 @@ function App() {
   const handleLogout = () => {
     setUsername('');
     setMessages([]);
+    setSymmetricKey(null); // Purge la clé à la déconnexion
+    setKeyPrompt(true);    // Réaffiche l'écran de saisie de clé
+    setKeyInput('');
+    setGeneratedKey(null);
+    setCopied(false);
     // Optionnel : socket?.disconnect();
   };
+
+  // Expiration automatique de la clé après 2h30min (9000000 ms)
+  useEffect(() => {
+    if (!symmetricKey) return;
+    const timeout = setTimeout(() => {
+      setSymmetricKey(null); // Purge la clé
+      setKeyPrompt(true);    // Réaffiche l'écran de saisie de clé
+      setKeyInput('');
+      setGeneratedKey(null);
+      setCopied(false);
+    }, 9000000); // 2h30min
+    return () => clearTimeout(timeout);
+  }, [symmetricKey]);
 
   // Génération d'une "clé" utilisable par crypto-js (string hex) à partir du mot de passe
   function deriveKeyFallback(password: string) {
