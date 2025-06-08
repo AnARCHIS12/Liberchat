@@ -90,7 +90,6 @@
   - Interface intuitive et responsive
   - Style moderne
   - Sélecteur d'emojis intégré
-  - Recherche de GIFs avec preview
   - Optimisations mobile/desktop
 
 ### 🖼️ Médias et Expressions
