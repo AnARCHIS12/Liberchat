@@ -58,11 +58,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
 
   const startRecording = async () => {
     let mimeType = '';
+    // Détection Electron (Chromium embarqué)
+    const isElectron = typeof window !== 'undefined' && window.process && window.process.type === 'renderer';
     // Détection Firefox (y compris ESR)
     const isFirefox = typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes('firefox');
     // Détection Safari (iOS/macOS)
     const isSafari = typeof navigator !== 'undefined' && /safari/i.test(navigator.userAgent) && !/chrome|chromium|android/i.test(navigator.userAgent);
-    if (isFirefox && MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+    if (isElectron && MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+      mimeType = 'audio/webm;codecs=opus';
+    } else if (isFirefox && MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
       mimeType = 'audio/ogg;codecs=opus';
     } else if (isSafari && MediaRecorder.isTypeSupported('audio/mp4')) {
       mimeType = 'audio/mp4';
@@ -74,6 +78,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
       mimeType = 'audio/webm';
     } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
       mimeType = 'audio/ogg';
+    } else if (MediaRecorder.isTypeSupported('audio/wav')) {
+      mimeType = 'audio/wav';
     } else {
       mimeType = '';
     }
@@ -83,6 +89,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
     mediaRecorderRef.current.ondataavailable = e => audioChunks.current.push(e.data);
     mediaRecorderRef.current.onstop = async () => {
       const blob = new Blob(audioChunks.current, { type: mimeType || 'audio/ogg' });
+      // Log debug pour Electron : type MIME et taille
+      console.log('[Vocal] Type MIME:', blob.type, '| Taille:', blob.size, '| Electron:', isElectron);
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64 = reader.result as string;
