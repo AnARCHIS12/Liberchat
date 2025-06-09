@@ -34,7 +34,21 @@ if (process.env.NODE_ENV !== 'production') {
 const app = express();
 
 // Helmet pour sécuriser les headers HTTP
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        mediaSrc: ["'self'", "data:"], // Autorise data: pour les médias
+        imgSrc: ["'self'", "data:"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        connectSrc: ["'self'", "ws://localhost:3000", "wss://liberchat-3-0-1.onrender.com", "wss://liberchat.onrender.com"],
+        // ...autres directives selon besoin...
+      },
+    },
+  })
+);
 
 // Limiteur de requêtes (anti-DDoS)
 const limiter = rateLimit({ windowMs: 1 * 60 * 1000, max: 100 });
