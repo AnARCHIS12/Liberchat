@@ -7,7 +7,7 @@ import { UserList } from './components/UserList';
 import Header from './components/Header';
 
 interface Message {
-  type: 'text' | 'file' | 'system' | 'gif';
+  type: 'text' | 'file' | 'system' | 'gif' | 'audio';
   username?: string;
   content?: string;
   fileData?: string;
@@ -158,6 +158,18 @@ function App() {
     }
   };
 
+  // Gestion de l'envoi de message vocal (dummy pour compatibilité)
+  const handleSendAudio = async (audioBase64: string) => {
+    // À adapter si chiffrement vocal nécessaire
+    const messageData: Message = {
+      type: 'audio',
+      username,
+      fileData: audioBase64,
+      timestamp: Date.now()
+    };
+    socket?.emit('chat message', messageData);
+  };
+
   const handleCallUser = (userToCall: string) => {
     setCallingUser(userToCall);
   };
@@ -209,6 +221,7 @@ function App() {
           <ChatInput 
             onSendMessage={handleSendMessage} 
             onSendFile={handleSendFile}
+            onSendAudio={handleSendAudio}
             isConnected={isConnected}
             users={users}
             currentUser={username}

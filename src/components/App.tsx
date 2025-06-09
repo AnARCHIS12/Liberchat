@@ -8,12 +8,13 @@ import Header from './Header';
 import CryptoJS from 'crypto-js';
 
 interface Message {
-  type: 'text' | 'file' | 'system';
+  type: 'text' | 'file' | 'system' | 'audio' | 'gif';
   username?: string;
   content?: string;
   fileData?: string;
   fileType?: string;
   fileName?: string;
+  gifUrl?: string;
   timestamp: number;
 }
 
@@ -157,6 +158,23 @@ function App() {
     reader.readAsDataURL(file); // On lit le fichier en base64 pour compatibilité
   };
 
+  // Ajout de la gestion de l'envoi de messages vocaux
+  const handleSendAudio = async (audioBase64: string) => {
+    if (!symmetricKey) {
+      alert('Clé de chiffrement non initialisée.');
+      return;
+    }
+    const encrypted = await encryptMessageE2EE(audioBase64, symmetricKey);
+    const messageData: Message = {
+      type: 'audio',
+      username,
+      fileData: JSON.stringify(encrypted),
+      fileType: 'audio/webm',
+      timestamp: Date.now()
+    };
+    socket?.emit('chat message', messageData);
+  };
+
   // Déchiffrement lors de la réception d'un fichier
   useEffect(() => {
     if (!socket || !symmetricKey) return;
@@ -197,6 +215,21 @@ function App() {
           // Si déchiffrement impossible, on affiche le contenu brut
         }
         msg.fileData = decryptedFile;
+      } else if (msg.type === 'audio' && msg.fileData) {
+        let decryptedAudio = msg.fileData;
+        try {
+          if (
+            typeof msg.fileData === 'string' &&
+            msg.fileData.trim().startsWith('{') &&
+            msg.fileData.trim().endsWith('}')
+          ) {
+            const encrypted = JSON.parse(msg.fileData);
+            if (encrypted && encrypted.iv && encrypted.content) {
+              decryptedAudio = await decryptMessageE2EE(encrypted, symmetricKey);
+            }
+          }
+        } catch (e) {}
+        msg.fileData = decryptedAudio;
       }
       setMessages((prev: Message[]) => [...prev, msg]);
     };
@@ -465,6 +498,7 @@ function App() {
             <ChatInput 
               onSendMessage={handleSendMessage} 
               onSendFile={handleSendFile}
+              onSendAudio={handleSendAudio}
               isConnected={isConnected}
               users={users}
               currentUser={username}

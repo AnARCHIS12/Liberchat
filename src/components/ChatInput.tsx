@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import React, { useState, FormEvent, ChangeEvent, useRef } from 'react';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { UserList } from './UserList';
@@ -6,6 +6,7 @@ import { UserList } from './UserList';
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
   onSendFile: (file: File) => Promise<void>;
+  onSendAudio: (audioBase64: string) => void; // Ajouté pour le vocal
   isConnected: boolean;
   users: Array<{ username: string; socketId: string }>;
   currentUser: string;
@@ -15,9 +16,12 @@ interface EmojiData {
   native: string;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, isConnected, users, currentUser }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSendAudio, isConnected, users, currentUser }) => {
   const [message, setMessage] = useState<string>('');
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
+  const [recording, setRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunks = useRef<Blob[]>([]);
 
   const handleEmojiSelect = (emoji: EmojiData) => {
     setMessage(prev => prev + emoji.native);
@@ -52,6 +56,49 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, isConn
     }
   };
 
+  const startRecording = async () => {
+    let mimeType = '';
+    // Détection Firefox (y compris ESR)
+    const isFirefox = typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes('firefox');
+    // Détection Safari (iOS/macOS)
+    const isSafari = typeof navigator !== 'undefined' && /safari/i.test(navigator.userAgent) && !/chrome|chromium|android/i.test(navigator.userAgent);
+    if (isFirefox && MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+      mimeType = 'audio/ogg;codecs=opus';
+    } else if (isSafari && MediaRecorder.isTypeSupported('audio/mp4')) {
+      mimeType = 'audio/mp4';
+    } else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+      mimeType = 'audio/webm;codecs=opus';
+    } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+      mimeType = 'audio/ogg;codecs=opus';
+    } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+      mimeType = 'audio/webm';
+    } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
+      mimeType = 'audio/ogg';
+    } else {
+      mimeType = '';
+    }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorderRef.current = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+    audioChunks.current = [];
+    mediaRecorderRef.current.ondataavailable = e => audioChunks.current.push(e.data);
+    mediaRecorderRef.current.onstop = async () => {
+      const blob = new Blob(audioChunks.current, { type: mimeType || 'audio/ogg' });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        onSendAudio(base64);
+      };
+      reader.readAsDataURL(blob);
+    };
+    mediaRecorderRef.current.start();
+    setRecording(true);
+  };
+
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    setRecording(false);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="sticky bottom-0 flex flex-wrap items-end gap-2 bg-black border-t-4 border-red-700 p-2 sm:p-4 relative">
       <div className="flex gap-2 w-full sm:w-auto order-1 sm:order-none">
@@ -72,6 +119,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, isConn
             disabled={!isConnected}
           />
         </label>
+        <button
+          type="button"
+          onClick={recording ? stopRecording : startRecording}
+          className={`flex-shrink-0 w-10 h-10 p-0 rounded-lg border-2 border-white transition-colors flex items-center justify-center ${recording ? 'bg-red-700 text-white' : 'bg-black text-red-700 hover:bg-red-700/20'}`}
+          style={{ aspectRatio: '1 / 1', minWidth: 40, minHeight: 40 }}
+          disabled={!isConnected}
+        >
+          {recording ? '⏹️' : '🎤'}
+        </button>
         <div className="block sm:hidden">
           <UserList users={users} currentUser={currentUser} isMobile={true} inChatInput={true} />
         </div>

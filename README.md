@@ -70,8 +70,6 @@
   - Indicateur de frappe
   - Historique des messages
   - Support complet des emojis
-  - Recherche et envoi de GIFs animés
-  - Cache optimisé pour les GIFs
   - Interface responsive mobile
 
 - 👥 **Gestion des Utilisateurs**
@@ -92,8 +90,15 @@
   - Interface intuitive et responsive
   - Style moderne
   - Sélecteur d'emojis intégré
-  - Recherche de GIFs avec preview
   - Optimisations mobile/desktop
+
+- 🎤 **Messages vocaux universels**
+  - Enregistrement vocal intégré (bouton micro)
+  - Lecture et envoi de vocaux chiffrés de bout en bout
+  - Compatibilité maximale : Chrome, Firefox (ESR inclus), Edge, Safari, Electron, Android, iOS, WebView…
+  - Sélection automatique du format audio optimal (ogg/opus, webm/opus, mp4)
+  - Lecture sans téléchargement, sans fuite de la clé
+  - Impossible de télécharger les vocaux (confidentialité renforcée)
 
 ### 🖼️ Médias et Expressions
 
@@ -208,7 +213,7 @@ Start Command: npm start
 2. **Accède à l’application**
    - Ouvre ton navigateur sur l’URL fournie par l’administrateur (ex : https://liberchat-3-0-1.onrender.com ou http://localhost:5173).
 
-3. **Choisis un nom d’utilisateur**
+3. **Choisis un nom d'utilisateur**
    - Entre un pseudo unique pour rejoindre le salon.
 
 4. **Commence à chatter !**

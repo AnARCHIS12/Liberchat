@@ -1,7 +1,8 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 
 interface Message {
-  type: 'text' | 'file' | 'system' | 'gif';
+  type: 'text' | 'file' | 'system' | 'audio' | 'gif';
   username?: string;
   content?: string;
   fileData?: string;
@@ -26,7 +27,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage }) => {
 
   const renderContent = () => {
     if (message.type === 'text') {
-      return <p className="break-words text-sm sm:text-base font-mono text-white">{message.content}</p>;
+      // Sanitize le contenu texte (HTML potentiellement dangereux)
+      return (
+        <p
+          className="break-words text-sm sm:text-base font-mono text-white"
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.content || '') }}
+        />
+      );
     } else if (message.type === 'file') {
       if (message.fileType?.startsWith('image/')) {
         return (
@@ -41,6 +48,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage }) => {
         );
       }
       return <span className="text-red-400 text-xs sm:text-sm">Fichier non supporté</span>;
+    } else if (message.type === 'audio' && message.fileData) {
+      // Suppression du bouton de téléchargement pour l'audio
+      return (
+        <div className="flex flex-col items-center w-full">
+          <audio controls src={message.fileData} className="w-full mt-1 rounded-lg border-2 border-red-700 bg-black shadow" style={{ minWidth: 180, maxWidth: 320 }} />
+          <span className="text-xs text-gray-400 mt-1 font-mono">Message vocal</span>
+        </div>
+      );
     } else if (message.type === 'gif') {
       return (
         <div className="max-w-[160px] sm:max-w-[220px]">
