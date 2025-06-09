@@ -229,6 +229,11 @@ function App() {
             }
           }
         } catch (e) {}
+        // Correction : s'assurer que le dataURL est bien préfixé
+        if (typeof decryptedAudio === 'string' && !decryptedAudio.startsWith('data:audio/')) {
+          const mime = msg.fileType && msg.fileType.startsWith('audio/') ? msg.fileType : 'audio/webm';
+          decryptedAudio = `data:${mime};base64,${decryptedAudio.replace(/^data:[^,]+,/, '')}`;
+        }
         msg.fileData = decryptedAudio;
       }
       setMessages((prev: Message[]) => [...prev, msg]);
