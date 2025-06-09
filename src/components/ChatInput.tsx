@@ -64,8 +64,16 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
     const isFirefox = typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes('firefox');
     // Détection Safari (iOS/macOS)
     const isSafari = typeof navigator !== 'undefined' && /safari/i.test(navigator.userAgent) && !/chrome|chromium|android/i.test(navigator.userAgent);
-    if (isElectron && MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-      mimeType = 'audio/webm;codecs=opus';
+    if (isElectron) {
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+        mimeType = 'audio/webm;codecs=opus';
+      } else if (MediaRecorder.isTypeSupported('audio/wav')) {
+        mimeType = 'audio/wav';
+        console.warn('[Vocal] Electron: fallback audio/wav');
+      } else {
+        mimeType = '';
+        alert('Aucun format audio compatible trouvé pour Electron.');
+      }
     } else if (isFirefox && MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
       mimeType = 'audio/ogg;codecs=opus';
     } else if (isSafari && MediaRecorder.isTypeSupported('audio/mp4')) {
@@ -80,6 +88,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
       mimeType = 'audio/ogg';
     } else if (MediaRecorder.isTypeSupported('audio/wav')) {
       mimeType = 'audio/wav';
+      console.warn('[Vocal] Fallback audio/wav (hors Electron)');
     } else {
       mimeType = '';
     }
