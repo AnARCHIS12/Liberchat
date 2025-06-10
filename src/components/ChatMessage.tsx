@@ -49,11 +49,27 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage }) => {
       }
       return <span className="text-red-400 text-xs sm:text-sm">Fichier non supporté</span>;
     } else if (message.type === 'audio' && message.fileData) {
-      // Suppression du bouton de téléchargement pour l'audio
+      const [audioError, setAudioError] = React.useState(false);
+      // Empêche le menu contextuel (clic droit) sur l'audio
+      const preventContextMenu = (e: React.MouseEvent<HTMLAudioElement>) => e.preventDefault();
       return (
         <div className="flex flex-col items-center w-full">
-          <audio controls src={message.fileData} className="w-full mt-1 rounded-lg border-2 border-red-700 bg-black shadow" style={{ minWidth: 180, maxWidth: 320 }} />
-          <span className="text-xs text-gray-400 mt-1 font-mono">Message vocal</span>
+          <audio
+            controls
+            src={message.fileData}
+            className="w-full mt-1 rounded-lg border-2 border-red-700 bg-black shadow"
+            style={{ minWidth: 180, maxWidth: 320 }}
+            onError={() => setAudioError(true)}
+            onContextMenu={preventContextMenu}
+            controlsList="nodownload noplaybackrate"
+          />
+          {audioError ? (
+            <span className="text-xs text-red-400 mt-1 font-mono">
+              ⚠️ Lecture vocale non supportée sur ce navigateur/appareil.
+            </span>
+          ) : (
+            <span className="text-xs text-gray-400 mt-1 font-mono">Message vocal</span>
+          )}
         </div>
       );
     } else if (message.type === 'gif') {

@@ -58,12 +58,19 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
 
   const startRecording = async () => {
     let mimeType = '';
-    // Détection Electron (Chromium embarqué)
-    const isElectron = typeof window !== 'undefined' && window.process && window.process.type === 'renderer';
-    // Détection Firefox (y compris ESR)
+    const isElectron = typeof navigator === 'object' && navigator.userAgent.toLowerCase().includes('electron');
     const isFirefox = typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes('firefox');
-    // Détection Safari (iOS/macOS)
     const isSafari = typeof navigator !== 'undefined' && /safari/i.test(navigator.userAgent) && !/chrome|chromium|android/i.test(navigator.userAgent);
+    // Options pour améliorer la qualité audio (si supporté)
+    const audioConstraints = {
+      audio: {
+        sampleRate: 48000, // 48kHz, standard WebRTC/Opus
+        channelCount: 2,   // stéréo
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
+    };
     if (isElectron) {
       if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
         mimeType = 'audio/webm;codecs=opus';
@@ -92,7 +99,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
     } else {
       mimeType = '';
     }
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia(audioConstraints);
     mediaRecorderRef.current = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
     audioChunks.current = [];
     mediaRecorderRef.current.ondataavailable = e => audioChunks.current.push(e.data);
