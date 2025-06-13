@@ -111,7 +111,6 @@
 - 📎 **Partage de Fichiers**
   - Support des images
   - Vérification de taille
-  - Prévisualisation intégrée
 
   ## 🛡️ Mentions spéciales sécurité & architecture
 
