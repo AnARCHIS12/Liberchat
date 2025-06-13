@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+    <!-- Cercle de fond -->
+    <circle cx="96" cy="96" r="80" fill="#cc0000"/>
+    
+    <!-- A anarchiste -->
+    <path fill="#FFFFFF" d="M96,40 L136,140 L116,140 L108,120 L84,120 L76,140 L56,140 L96,40 M96,72 L88,102 L104,102 L96,72"/>
+    
+    <!-- Cercle autour du A -->
+    <circle cx="96" cy="96" r="60" stroke="#FFFFFF" stroke-width="6" fill="none"/>
+</svg>

@@ -1,0 +1,115 @@
+# Node
+node_modules/
+.env
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vite
+/dist/
+.vite/
+
+# Electron
+/electron/dist/
+/electron/node_modules/
+!electron/package.json
+!electron/main.js
+!electron/assets/
+
+# Capacitor
+/android/
+/ios/
+/capacitor.config.json
+/capacitor.config.ts
+
+# Android
+*.apk
+*.ap_ 
+*.aab
+*.dex
+*.class
+*.iml
+*.hprof
+*.cxx/
+*.idea/
+.gradle/
+build/
+local.properties
+captures/
+output.json
+android
+# iOS
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xcscmblueprint
+*.xcuserstate
+*.xcworkspace/
+*.xcodeproj/
+*.xcassets/
+*.DS_Store
+*.swp
+*.xcuserdatad/
+Pods/
+DerivedData/
+
+# macOS
+*.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# Coverage
+coverage/
+*.lcov
+
+# Logs
+*.log
+logs/
+combined.log
+error.log
+
+# System files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# VSCode
+.vscode/
+
+# Misc
+*.sublime-workspace
+*.sublime-project
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# Test/coverage
+coverage/
+.nyc_output/
+
+# Build outputs
+/dist/
+/build/
+
+# Documentation output
+/docs/assets/
+
+# Ignore lockfiles from old/unused package managers
+package-lock-ancienneversionnosecure.json
+package-ancienneversionnosecure..json
+
+# Exceptions utiles (ex: Electron)
+!electron/package.json
+!electron/main.js
+!electron/assets/
+
+# Fin
