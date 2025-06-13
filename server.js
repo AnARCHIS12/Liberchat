@@ -40,7 +40,7 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         mediaSrc: ["'self'", "data:"], // Autorise data: pour les médias
-        imgSrc: ["'self'", "data:"],
+        imgSrc: ["'self'", "data:", "blob:"], // Autorise les images blob pour l'aperçu
         scriptSrc: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         connectSrc: ["'self'", "ws://localhost:3000", "wss://liberchat-3-0-1.onrender.com", "wss://liberchat.onrender.com"],
