@@ -133,6 +133,7 @@
 - [Guide d'utilisation](docs/Utilisation.md)
 - [FAQ](docs/FAQ.md)
 - [Guide de contribution](docs/Contribution.md)
+- [Relais d'anonymat (proxy, Tor, VPN)](docs/Relais-Anonymat.md)
 
 
 
