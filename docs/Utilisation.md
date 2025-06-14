@@ -20,7 +20,7 @@
 ### Médias et fichiers
 - Envoi d'images (prévisualisation et zoom au clic)
 - Envoi de messages vocaux (microphone)
-- Aperçu des GIFs
+
 
 ### Interface
 - Thème sombre moderne
