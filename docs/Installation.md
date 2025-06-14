@@ -51,8 +51,7 @@ npm run dev
 1. Dans votre tableau de bord Render :
    - Créez un nouveau Web Service
    - Liez votre repository GitHub
-   - Dans l'onglet "Environment", ajoutez la variable :
-     - `VITE_GIPHY_API_KEY`: Votre clé API Giphy
+
 
 2. Configurez le build :
    - Build Command : `npm install && npm run build`
@@ -70,8 +69,4 @@ npm run dev
 - Vérifiez que toutes les dépendances sont installées : `npm install`
 - Vérifiez qu'aucun autre service n'utilise le port 5173
 
-### Les GIFs ne s'affichent pas
-- Vérifiez que votre clé API Giphy est correctement configurée dans `.env`
-- Vérifiez que le fichier `.env` est bien à la racine du projet
-- Sur Render, vérifiez que la variable d'environnement est bien configurée
-- Vérifiez la console du navigateur pour les erreurs éventuelles
+
