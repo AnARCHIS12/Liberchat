@@ -56,14 +56,15 @@
     <br />Sécurisé
 </td>
 <td align="center">
-    <img src="https://img.icons8.com/fluency/48/000000/palette.png" width="30"/>
+    <span style="font-size:2em;">🌙</span>
     <br />Thème Sombre
-    <img src="https://img.icons8.com/fluency/48/000000/design-style.png" width="30"/>
+    <span style="font-size:2em;">🎨</span>
     <br />Style Moderne
 </td>
 </tr>
 </table>
 </div>
+
 
 ### 🎯 Fonctionnalités Détaillées
 
