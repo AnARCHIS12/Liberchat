@@ -58,6 +58,8 @@
 <td align="center">
     <span style="font-size:2em;">🌙</span>
     <br />Thème Sombre
+</td>
+<td align="center">
     <span style="font-size:2em;">🎨</span>
     <br />Style Moderne
 </td>
