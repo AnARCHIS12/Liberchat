@@ -1,5 +1,7 @@
 <div align="center">
 
+> 🚀 **Branche de développement active : `Librechat-3.5.0`**
+
 # 🚩✊ Liberchat — La Commune Numérique
 
 <img src="public/images/liberchat-logo.svg" alt="Liberchat Logo" width="200"/>
@@ -99,6 +101,11 @@
   - Sélection automatique du format audio optimal (ogg/opus, webm/opus, mp4)
   - Lecture sans téléchargement, sans fuite de la clé
   - Impossible de télécharger les vocaux (confidentialité renforcée)
+
+- 📲 **Progressive Web App (PWA)**
+  - Installation sur l'écran d'accueil (iOS, Android, desktop)
+  - Support du mode hors-ligne (service worker)
+  - Manifest et icônes adaptés pour mobile
 
 ### 🖼️ Médias et Expressions
 
