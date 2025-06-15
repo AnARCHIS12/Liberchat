@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ImageModal from './ImageModal';
 
 interface Message {
@@ -21,9 +21,15 @@ interface ChatMessageProps {
   onReply?: (username: string) => void; // Ajout pour la réponse
 }
 
+// Verrou global pour bloquer le menu contextuel après une prévisualisation image
+let blockMenu = false;
+
 const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => void }> = ({ message, isOwnMessage, onDeleteMessage, onReply }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [menuPos, setMenuPos] = useState<{x: number, y: number} | null>(null);
+  const bubbleRef = useRef<HTMLDivElement>(null);
 
   const formatTime = (timestamp: number) => {
     return new Date(timestamp).toLocaleTimeString([], { 
@@ -60,11 +66,13 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
               src={message.fileData} 
               alt={message.fileName || 'Image'}
               className="w-full rounded-lg shadow-lg border-2 border-red-700 bg-black cursor-zoom-in hover:scale-105 transition"
-              onClick={() => setModalOpen(true)}
+              onClick={handleImageEvent}
+              onContextMenu={handleImageEvent}
+              onTouchStart={handleImageEvent}
             />
             <p className="text-xs sm:text-sm text-red-300 mt-1 truncate font-mono">{message.fileName}</p>
             {modalOpen && (
-              <ImageModal src={message.fileData!} alt={message.fileName} onClose={() => setModalOpen(false)} />
+              <ImageModal src={message.fileData!} alt={message.fileName} onClose={() => { setModalOpen(false); setShowMenu(false); blockMenu = true; setTimeout(() => { blockMenu = false; }, 500); }} />
             )}
           </div>
         );
@@ -130,10 +138,74 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
     }
   };
 
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (blockMenu) {
+      e.preventDefault();
+      blockMenu = false;
+      return;
+    }
+    if (message.type === 'system') return;
+    e.preventDefault();
+    setShowMenu(true);
+    setMenuPos({ x: e.clientX, y: e.clientY });
+  };
+
+  // Pour mobile : appui long uniquement (pas de menu sur simple tap)
+  let touchTimer: NodeJS.Timeout;
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (message.type === 'system') return;
+    touchTimer = setTimeout(() => {
+      if (!blockMenu) {
+        setShowMenu(true);
+        setMenuPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+      }
+    }, 250); // délai réduit à 250ms
+  };
+  const handleTouchEnd = () => clearTimeout(touchTimer);
+
+  // Détection mobile
+  const isMobile = typeof window !== 'undefined' && /android|iphone|ipad|ipod|opera mini|iemobile|mobile/i.test(navigator.userAgent);
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (!isMobile) return;
+    if (message.type === 'system') return;
+    e.preventDefault();
+    setShowMenu(true);
+    setMenuPos({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleReplyMenu = () => {
+    setShowMenu(false);
+    if (onReply) onReply(message);
+  };
+  const handleCloseMenu = () => setShowMenu(false);
+
+  // Affichage du menu contextuel toujours en bas de la bulle
+  React.useEffect(() => {
+    if (showMenu && bubbleRef.current) {
+      const rect = bubbleRef.current.getBoundingClientRect();
+      if (isOwnMessage) {
+        setMenuPos({ x: rect.right, y: rect.bottom }); // à droite pour ses propres messages
+      } else {
+        setMenuPos({ x: rect.left, y: rect.bottom }); // à gauche pour les autres
+      }
+    }
+  }, [showMenu, isOwnMessage]);
+
+  // Empêche le menu contextuel sur clic ou appui long image
+  const handleImageEvent = (e: React.SyntheticEvent) => {
+    e.stopPropagation();
+    blockMenu = true;
+    if (e.type === 'click') setModalOpen(true);
+  };
+
   return (
-    <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}
-      onClick={handleReplyClick}
-      style={{ cursor: message.username && message.type !== 'system' ? 'pointer' : 'default' }}
+    <div
+      className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}
+      onContextMenu={handleContextMenu}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      ref={bubbleRef}
     >
       <div className={`group rounded-xl px-2 sm:px-4 py-1 sm:py-2 mb-0.5 max-w-[90vw] sm:max-w-lg shadow-lg border-2 ${isOwnMessage ? 'bg-red-700/80 border-white text-white' : 'bg-black/80 border-red-700 text-white'} relative`}>
         {/* Affichage de la citation si replyTo existe */}
@@ -151,17 +223,6 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
           </span>
         )}
         {renderContent()}
-        {isOwnMessage && (
-          <button
-            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 text-red-400 border border-red-700 rounded-full p-1 text-xs font-mono shadow hover:bg-red-700 hover:text-white z-50"
-            title="Supprimer"
-            onClick={handleDelete}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-              <path fillRule="evenodd" d="M6.5 4.5A1.5 1.5 0 018 3h4a1.5 1.5 0 011.5 1.5V5h3a.5.5 0 010 1h-1.05l-.45 9.01A2.5 2.5 0 0111.5 17h-3a2.5 2.5 0 01-2.5-2.49L5.55 6H4.5a.5.5 0 010-1h3v-.5zm1 0V5h5v-.5a.5.5 0 00-.5-.5h-4a.5.5 0 00-.5.5zM6.04 6l.45 9.01A1.5 1.5 0 007.5 16h3a1.5 1.5 0 001.5-1.49L13.96 6H6.04z" clipRule="evenodd" />
-            </svg>
-          </button>
-        )}
         {showConfirm && (
           <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/90">
             <div className="bg-black border-2 border-red-700 rounded-xl px-6 py-5 shadow-lg flex flex-col items-center max-w-sm w-full">
@@ -171,6 +232,35 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
                 <button onClick={cancelDelete} className="bg-black hover:bg-red-900 active:bg-red-950 text-white px-6 py-2 rounded-lg font-mono shadow border border-red-700 transition-colors focus:ring-0 focus:outline-none text-sm">Annuler</button>
               </div>
             </div>
+          </div>
+        )}
+        {/* Menu contextuel pour répondre */}
+        {showMenu && menuPos && (
+          <div
+            className="fixed z-50 bg-black border border-red-700 rounded shadow-lg text-xs text-white font-mono animate-fade-in"
+            style={{ top: menuPos.y, left: isOwnMessage ? undefined : menuPos.x, right: isOwnMessage ? `calc(100vw - ${menuPos.x}px)` : 'auto', minWidth: 110 }}
+            onClick={handleCloseMenu}
+          >
+            <button
+              className="block w-full text-left px-4 py-2 hover:bg-red-700/80 hover:text-white"
+              onClick={e => { e.stopPropagation(); handleReplyMenu(); }}
+            >
+              ↩️ Répondre
+            </button>
+            {isOwnMessage && onDeleteMessage && (
+              <button
+                className="block w-full text-left px-4 py-2 bg-black text-red-400 font-mono hover:bg-red-700/80 hover:text-white border-t border-red-700 transition-colors"
+                onClick={e => { e.stopPropagation(); onDeleteMessage(message.id); handleCloseMenu(); }}
+              >
+                🗑️ Supprimer
+              </button>
+            )}
+            <button
+              className="block w-full text-left px-4 py-2 bg-black text-red-400 font-mono hover:bg-gray-800 hover:text-red-400 border-t border-red-700 transition-colors"
+              onClick={e => { e.stopPropagation(); handleCloseMenu(); }}
+            >
+              ✖️ Annuler
+            </button>
           </div>
         )}
       </div>
