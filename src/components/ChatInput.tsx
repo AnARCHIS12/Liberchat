@@ -3,20 +3,35 @@ import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { UserList } from './UserList';
 
+// Définition locale du type Message (copié de App.tsx)
+type Message = {
+  id: number;
+  type: 'text' | 'file' | 'system' | 'gif' | 'audio';
+  username?: string;
+  content?: string;
+  fileData?: string;
+  fileType?: string;
+  fileName?: string;
+  gifUrl?: string;
+  timestamp: number;
+};
+
 interface ChatInputProps {
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, replyTo?: Message | null) => void;
   onSendFile: (file: File) => Promise<void>;
-  onSendAudio: (audioBase64: string) => void; // Ajouté pour le vocal
+  onSendAudio: (audioBase64: string) => void;
   isConnected: boolean;
   users: Array<{ username: string; socketId: string }>;
   currentUser: string;
+  replyTo?: Message | null;
+  onReplyHandled?: () => void;
 }
 
 interface EmojiData {
   native: string;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSendAudio, isConnected, users, currentUser }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSendAudio, isConnected, users, currentUser, replyTo, onReplyHandled }) => {
   const [message, setMessage] = useState<string>('');
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
   const [recording, setRecording] = useState(false);
@@ -41,8 +56,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
   const handleSubmit = (e?: FormEvent) => {
     e?.preventDefault();
     if (message.trim() && isConnected) {
-      onSendMessage(message);
+      onSendMessage(message, replyTo);
       setMessage('');
+      setShowMentions(false);
+      setMentionQuery('');
+      if (onReplyHandled) onReplyHandled(); // Ferme le mode réponse après envoi
     }
   };
 
@@ -167,10 +185,19 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
     setRecording(false);
   };
 
+  // Détection mobile (hors SSR)
+  const isMobile = typeof window !== 'undefined' && /android|iphone|ipad|ipod|opera mini|iemobile|mobile/i.test(navigator.userAgent);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setMessage(val);
-    // Détection de @ pour suggestions
+    // Désactive totalement la suggestion de mention sur mobile
+    if (isMobile) {
+      setShowMentions(false);
+      setMentionQuery('');
+      return;
+    }
+    // Détection de @ pour suggestions (desktop uniquement)
     const match = val.slice(0, e.target.selectionStart ?? 0).match(/@([\w-]*)$/);
     if (match) {
       setMentionQuery(match[1]);
@@ -207,15 +234,63 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
         setMentionIndex(i => (i - 1 + filteredUsers.length) % filteredUsers.length);
       } else if (e.key === 'Enter' || e.key === 'Tab') {
         e.preventDefault();
-        handleMentionSelect(filteredUsers[mentionIndex].username);
+        setShowMentions(false);
+        setMentionQuery('');
+        // handleMentionSelect(filteredUsers[mentionIndex].username); // désactivé pour mobile
       } else if (e.key === 'Escape') {
         setShowMentions(false);
       }
+    } else if (e.key === 'Enter') {
+      setShowMentions(false);
+      setMentionQuery('');
     }
   };
 
+  React.useEffect(() => {
+    // Ne pré-remplit plus le champ avec @username lors d'une réponse
+    if (replyTo) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [replyTo]);
+
+  // Ferme la liste des mentions si le message est vidé (après envoi)
+  React.useEffect(() => {
+    if (!message) {
+      setShowMentions(false);
+      setMentionQuery('');
+    }
+  }, [message]);
+
+  // Empêche l'ouverture de la liste des mentions sur mobile lors du focus
+  React.useEffect(() => {
+    if (isMobile && inputRef.current) {
+      const input = inputRef.current;
+      const handleFocus = () => {
+        setShowMentions(false);
+        setMentionQuery('');
+      };
+      input.addEventListener('focus', handleFocus);
+      return () => input.removeEventListener('focus', handleFocus);
+    }
+  }, [isMobile]);
+
   return (
     <form onSubmit={handleSubmit} className="sticky bottom-0 flex flex-wrap items-end gap-2 bg-black border-t-4 border-red-700 p-2 sm:p-4 relative">
+      {/* Affichage du message cité façon messagerie moderne */}
+      {replyTo && (
+        <div className="absolute -top-16 left-0 w-full flex items-center justify-between px-3 py-2 bg-black/90 border-l-4 border-red-700 rounded-t-lg rounded-b-sm shadow-lg" style={{minHeight:'36px'}}>
+          <div className="truncate max-w-[80%]">
+            <div className="text-xs text-red-400 font-mono mb-0.5">{replyTo.username}</div>
+            <div className="text-sm text-gray-200 font-mono truncate">
+              {replyTo.type === 'text' ? (replyTo.content?.slice(0, 80) || '') : replyTo.type === 'file' ? '[Fichier]' : replyTo.type === 'audio' ? '[Vocal]' : replyTo.type === 'gif' ? '[GIF]' : '[Message]'}
+            </div>
+          </div>
+          <button type="button" onClick={() => onReplyHandled && onReplyHandled()} className="ml-2 text-gray-400 hover:text-red-500 p-0.5 rounded focus:outline-none" title="Annuler la réponse" aria-label="Annuler la réponse">×</button>
+        </div>
+      )}
       {/* Aperçu de l'image à envoyer */}
       {imagePreview && (
         <div className="w-full flex flex-col items-center mb-2">

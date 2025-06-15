@@ -11,15 +11,17 @@ interface Message {
   fileName?: string;
   gifUrl?: string;
   timestamp: number;
+  replyTo?: Message; // Ajout de la propriété replyTo
 }
 
 interface ChatMessageProps {
   message: Message;
   isOwnMessage: boolean;
-  onDeleteMessage?: (id: number) => void; // Correction : id est number
+  onDeleteMessage?: (id: number) => void;
+  onReply?: (username: string) => void; // Ajout pour la réponse
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDeleteMessage }) => {
+const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => void }> = ({ message, isOwnMessage, onDeleteMessage, onReply }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -122,12 +124,29 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
     setShowConfirm(false);
   };
 
+  const handleReplyClick = () => {
+    if (message.username && message.type !== 'system' && onReply) {
+      onReply(message);
+    }
+  };
+
   return (
     <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}
+      onClick={handleReplyClick}
+      style={{ cursor: message.username && message.type !== 'system' ? 'pointer' : 'default' }}
     >
       <div className={`group rounded-xl px-2 sm:px-4 py-1 sm:py-2 mb-0.5 max-w-[90vw] sm:max-w-lg shadow-lg border-2 ${isOwnMessage ? 'bg-red-700/80 border-white text-white' : 'bg-black/80 border-red-700 text-white'} relative`}>
+        {/* Affichage de la citation si replyTo existe */}
+        {message.replyTo && (
+          <div className="mb-2 px-3 py-1 bg-black/95 border-l-4 border-red-700 rounded-lg shadow-inner max-w-[220px] sm:max-w-[320px]">
+            <div className="text-[11px] text-red-400 font-mono mb-0.5 truncate">{message.replyTo.username}</div>
+            <div className="text-xs text-gray-200 font-mono break-words truncate">
+              {message.replyTo.type === 'text' ? (message.replyTo.content?.slice(0, 60) || '') : message.replyTo.type === 'file' ? '[Fichier]' : message.replyTo.type === 'audio' ? '[Vocal]' : message.replyTo.type === 'gif' ? '[GIF]' : '[Message]'}
+            </div>
+          </div>
+        )}
         {message.username && message.type !== 'system' && (
-          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-red-300 mb-1 block font-mono">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-red-300 mb-1 block font-mono flex items-center gap-2">
             {isOwnMessage ? 'Vous' : message.username}
           </span>
         )}

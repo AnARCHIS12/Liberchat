@@ -38,6 +38,7 @@ function App() {
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [isFallbackCrypto, setIsFallbackCrypto] = useState(false);
+  const [replyTo, setReplyTo] = useState<Message | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -108,18 +109,15 @@ function App() {
     socket?.emit('register', name);
   };
 
-  const handleSendMessage = async (message: string) => {
-    if (!symmetricKey) {
-      alert('Clé de chiffrement non initialisée.');
-      return;
-    }
+  const handleSendMessage = async (message: string, replyTo?: Message | null) => {
+    if (!symmetricKey) return;
     const encrypted = await encryptMessageE2EE(message, symmetricKey);
-    const messageData: Message = {
-      id: Date.now(),
+    const messageData: Omit<Message, 'id'> & { replyTo?: { id: number; username?: string; content?: string; type?: string } } = {
       type: 'text',
       username,
       content: JSON.stringify(encrypted),
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      ...(replyTo ? { replyTo: { id: replyTo.id, username: replyTo.username, content: replyTo.content, type: replyTo.type } } : {})
     };
     socket?.emit('chat message', messageData);
   };
@@ -439,6 +437,10 @@ function App() {
     };
   }, [socket]);
 
+  const handleReply = (msg: Message) => {
+    setReplyTo(msg);
+  };
+
   if (keyPrompt) {
     return (
       <div className="relative min-h-screen bg-gradient-to-br from-black via-red-950 to-black text-white font-sans flex flex-col">
@@ -523,6 +525,7 @@ function App() {
                 message={msg} 
                 isOwnMessage={msg.username === username}
                 onDeleteMessage={handleDeleteMessage}
+                onReply={() => handleReply(msg)}
               />
             ))}
             <div ref={messagesEndRef} />
@@ -535,6 +538,8 @@ function App() {
               isConnected={isConnected}
               users={users}
               currentUser={username}
+              replyTo={replyTo}
+              onReplyHandled={() => setReplyTo(null)}
             />
           </div>
         </div>
