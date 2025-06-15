@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond du logo -->
+  <rect width="512" height="512" fill="#000000"/>
+  
+  <!-- Étoile rouge -->
+  <path d="M256 60 L292 188 L428 188 L318 272 L354 400 L256 328 L158 400 L194 272 L84 188 L220 188 Z" fill="#cc0000"/>
+  
+  <!-- Bulle de chat -->
+  <path d="M256 140 Q380 140 380 240 Q380 320 300 320 L256 320 L220 360 L220 320 Q132 320 132 240 Q132 140 256 140 Z" 
+        fill="none" 
+        stroke="#cc0000" 
+        stroke-width="24"/>
+  
+  <!-- Symbole @ pour représenter la communication -->
+  <path d="M256 200 Q300 200 300 240 Q300 280 256 280 Q212 280 212 240 Q212 200 256 200 M256 180 Q190 180 190 240 Q190 300 256 300 Q322 300 322 240 Q322 180 256 180" 
+        fill="#cc0000"/>
+</svg>
