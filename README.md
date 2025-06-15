@@ -75,7 +75,7 @@
   - Historique des messages
   - Support complet des emojis
   - Interface responsive mobile
-  - reponse modal 
+  - Reponse modal 
 
 - 👥 **Gestion des Utilisateurs**
   - Liste des utilisateurs en ligne
