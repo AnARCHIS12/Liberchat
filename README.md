@@ -250,7 +250,7 @@ Start Command: npm start
 
 ### Interface de chat
 
-<img src="Capture d’écran du 2025-06-01 13-53-17.png" alt="Aperçu chat LiberChat" width="350" style="border-radius: 12px; box-shadow: 0 2px 12px #0004;" />
+<img src="https://github.com/AnARCHIS12/Liberchat/blob/Liberchat3.5.5/Capture%20d%E2%80%99%C3%A9cran%20du%202025-06-14%2015-32-17.png" alt="Aperçu chat LiberChat" width="350" style="border-radius: 12px; box-shadow: 0 2px 12px #0004;" />
 
 </div>
 
