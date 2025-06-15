@@ -347,6 +347,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
           onKeyDown={handleKeyDown}
           onKeyPress={(e: React.KeyboardEvent) => e.key === 'Enter' && !e.shiftKey && handleSubmit()}
           className="w-full px-3 py-2 bg-black border-2 border-red-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 text-white placeholder-gray-400 text-sm sm:text-base font-mono shadow"
+          style={{ fontSize: '16px' }}
           placeholder={isConnected ? "Écrivez un message révolutionnaire..." : "Connexion au serveur..."}
           maxLength={500}
           autoComplete="off"

@@ -557,14 +557,14 @@ function App() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-black via-red-950 to-black text-white font-sans">
+    <div className="h-screen min-h-0 flex flex-col bg-gradient-to-br from-black via-red-950 to-black text-white font-sans" style={{height:'100dvh', minHeight:'0'}}>
       <Header onLogout={handleLogout} isLoggedIn={!!username} />
-      <div className="flex-1 flex flex-col sm:flex-row overflow-hidden">
+      <div className="flex-1 flex flex-col sm:flex-row overflow-hidden min-h-0">
         <aside className="hidden sm:block w-full sm:w-64 bg-black border-r-4 border-red-700 flex-shrink-0 z-0">
           <UserList users={users} currentUser={username} />
         </aside>
         <div className="flex-1 flex flex-col bg-black/80 border-l-0 sm:border-l-4 border-red-700 min-h-0">
-          <main className="flex-1 overflow-y-auto p-4 space-y-4">
+          <main className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-4 min-h-0" style={{WebkitOverflowScrolling:'touch'}}>
             {messages.filter(msg => typeof msg.id === 'number').map((msg: Message, index: number) => (
               <ChatMessage 
                 key={msg.id || index} 
@@ -576,7 +576,7 @@ function App() {
             ))}
             <div ref={messagesEndRef} />
           </main>
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 sticky bottom-0 z-10 bg-black/95 border-t-2 border-red-700">
             <ChatInput 
               onSendMessage={handleSendMessage} 
               onSendFile={handleSendFile}
