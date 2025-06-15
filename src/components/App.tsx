@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { io, Socket } from 'socket.io-client';
+import io from 'socket.io-client';
 import { WelcomeScreen } from './WelcomeScreen';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
@@ -8,7 +8,8 @@ import Header from './Header';
 import CryptoJS from 'crypto-js';
 
 interface Message {
-  type: 'text' | 'file' | 'system' | 'audio' | 'gif';
+  id: number;
+  type: 'text' | 'file' | 'system' | 'gif' | 'audio';
   username?: string;
   content?: string;
   fileData?: string;
@@ -24,7 +25,7 @@ interface UserInfo {
 }
 
 function App() {
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<ReturnType<typeof io> | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [username, setUsername] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -50,14 +51,13 @@ function App() {
       socketUrl = 'http://localhost:3000';
     }
     const newSocket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
-      withCredentials: true
+      transports: ['websocket', 'polling']
     });
     setSocket(newSocket);
 
     newSocket.on('connect', () => setIsConnected(true));
     newSocket.on('disconnect', () => setIsConnected(false));
-    newSocket.on('connect_error', (err) => {
+    newSocket.on('connect_error', (err: any) => {
       console.error('Erreur de connexion Socket.IO :', err);
     });
 
@@ -67,6 +67,7 @@ function App() {
 
     newSocket.on('userJoined', (user: string) => {
       setMessages(prev => [...prev, {
+        id: Date.now(),
         type: 'system',
         content: `${user} a rejoint le chat`,
         timestamp: Date.now()
@@ -75,6 +76,7 @@ function App() {
 
     newSocket.on('userLeft', (user: string) => {
       setMessages(prev => [...prev, {
+        id: Date.now(),
         type: 'system',
         content: `${user} a quitté le chat`,
         timestamp: Date.now()
@@ -113,6 +115,7 @@ function App() {
     }
     const encrypted = await encryptMessageE2EE(message, symmetricKey);
     const messageData: Message = {
+      id: Date.now(),
       type: 'text',
       username,
       content: JSON.stringify(encrypted),
@@ -146,6 +149,7 @@ function App() {
         return;
       }
       const messageData: Message = {
+        id: Date.now(),
         type: 'file',
         username,
         fileData: JSON.stringify(encryptedFile),
@@ -166,6 +170,7 @@ function App() {
     }
     const encrypted = await encryptMessageE2EE(audioBase64, symmetricKey);
     const messageData: Message = {
+      id: Date.now(),
       type: 'audio',
       username,
       fileData: JSON.stringify(encrypted),
@@ -414,6 +419,26 @@ function App() {
     return Array.from(array, x => charset[x % charset.length]).join('');
   }
 
+  // Ajout de la fonction handleDeleteMessage si manquante
+  const handleDeleteMessage = (id: number) => {
+    if (socket) {
+      socket.emit('delete message', { id });
+    }
+  };
+
+  useEffect(() => {
+    if (!socket) return;
+    // Suppression d'un message côté client
+    const handleMessageDeleted = ({ id }: { id: number }) => {
+      console.log('[CLIENT] Message supprimé reçu id:', id, typeof id);
+      setMessages(prev => prev.filter(msg => msg.id !== id));
+    };
+    socket.on('message deleted', handleMessageDeleted);
+    return () => {
+      socket.off('message deleted', handleMessageDeleted);
+    };
+  }, [socket]);
+
   if (keyPrompt) {
     return (
       <div className="relative min-h-screen bg-gradient-to-br from-black via-red-950 to-black text-white font-sans flex flex-col">
@@ -491,13 +516,16 @@ function App() {
           <UserList users={users} currentUser={username} />
         </aside>
         <div className="flex-1 flex flex-col bg-black/80 border-l-0 sm:border-l-4 border-red-700 min-h-0">
-          <main className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-4 bg-black/60 min-h-0">
-            <div className="flex flex-col space-y-2 sm:space-y-4">
-              {messages.map((msg, index) => (
-                <ChatMessage key={index} message={msg} isOwnMessage={msg.username === username} />
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
+          <main className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.filter(msg => typeof msg.id === 'number').map((msg: Message, index: number) => (
+              <ChatMessage 
+                key={msg.id || index} 
+                message={msg} 
+                isOwnMessage={msg.username === username}
+                onDeleteMessage={handleDeleteMessage}
+              />
+            ))}
+            <div ref={messagesEndRef} />
           </main>
           <div className="flex-shrink-0">
             <ChatInput 

@@ -102,6 +102,7 @@ const users = new Map();
 const usersByName = new Map();
 const messages = [];
 const MAX_MESSAGES = 100;
+let nextMessageId = 1;
 
 const cleanOldMessages = () => {
   if (messages.length > MAX_MESSAGES) {
@@ -196,7 +197,8 @@ io.on('connection', (socket) => {
     }
 
     message.username = user.username;
-    
+    message.id = nextMessageId++;
+
     if (message.type === 'text') {
       message.content = xss(message.content); // Nettoyage XSS pour les messages texte
     } else if (message.type === 'file') {
@@ -219,6 +221,48 @@ io.on('connection', (socket) => {
     io.emit('chat message', message);
     console.log('Message envoyé à tous les clients:', message);
     logger.info(`Message ${message.type} reçu de ${user.username}`);
+  });
+
+  // Suppression sécurisée d'un message
+  socket.on('delete message', ({ id }) => {
+    const user = users.get(socket.id);
+    console.log('[SUPPRESSION] Demande de suppression id:', id, 'par', user?.username);
+    if (!user || !id) return;
+    const msgIndex = messages.findIndex(m => m.id === id);
+    if (msgIndex === -1) {
+      console.log('[SUPPRESSION] Message non trouvé pour id:', id);
+      return;
+    }
+    if (messages[msgIndex].username !== user.username) {
+      console.log('[SUPPRESSION] Refusé :', user.username, 'n\'est pas l\'auteur du message', id);
+      return;
+    }
+    messages.splice(msgIndex, 1);
+    io.emit('message deleted', { id });
+    logger.info(`Message supprimé par ${user.username}: ${id}`);
+    console.log('[SUPPRESSION] Message supprimé id:', id);
+  });
+
+  socket.on('userJoined', (username) => {
+    const systemMessage = {
+      id: nextMessageId++,
+      type: 'system',
+      content: `${username} a rejoint le chat`,
+      timestamp: Date.now()
+    };
+    messages.push(systemMessage);
+    io.emit('chat message', systemMessage);
+  });
+
+  socket.on('userLeft', (username) => {
+    const systemMessage = {
+      id: nextMessageId++,
+      type: 'system',
+      content: `${username} a quitté le chat`,
+      timestamp: Date.now()
+    };
+    messages.push(systemMessage);
+    io.emit('chat message', systemMessage);
   });
 });
 

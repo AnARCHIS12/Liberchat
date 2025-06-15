@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { io, Socket } from 'socket.io-client';
+import io from 'socket.io-client';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import ChatMessage from './components/ChatMessage';
 import ChatInput from './components/ChatInput';
@@ -7,6 +7,7 @@ import { UserList } from './components/UserList';
 import Header from './components/Header';
 
 interface Message {
+  id: number;
   type: 'text' | 'file' | 'system' | 'gif' | 'audio';
   username?: string;
   content?: string;
@@ -22,7 +23,7 @@ interface UserInfo {
 }
 
 function App() {
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<any>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [username, setUsername] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -85,21 +86,12 @@ function App() {
       setUsers(userList);
     });
 
-    newSocket.on('userJoined', (user: string) => {
-      setMessages(prev => [...prev, {
-        type: 'system',
-        content: `${user} a rejoint le chat`,
-        timestamp: Date.now()
-      }]);
+    newSocket.on('userJoined', () => {
+      // Ne rien faire ici, le serveur enverra un message système avec id
     });
 
     newSocket.on('userLeft', (user: string) => {
-      setMessages(prev => [...prev, {
-        type: 'system',
-        content: `${user} a quitté le chat`,
-        timestamp: Date.now()
-      }]);
-      // Si l'utilisateur qui part était en appel, on termine l'appel
+      // Ne rien faire ici, le serveur enverra un message système avec id
       if (user === callingUser) {
         setCallingUser('');
       }
@@ -125,10 +117,11 @@ function App() {
     generateSymmetricKey().then(setSymmetricKey);
   }, []);
 
+  // Suppression de l'ajout local du message, on attend la réponse du serveur
   const handleSendMessage = async (message: string) => {
     if (!symmetricKey) return;
     const encrypted = await encryptMessage(message, symmetricKey);
-    const messageData: Message = {
+    const messageData: Omit<Message, 'id'> = {
       type: 'text',
       username,
       content: JSON.stringify(encrypted),
@@ -142,7 +135,7 @@ function App() {
       const reader = new FileReader();
       reader.onload = () => {
         const fileData = reader.result as string;
-        const messageData: Message = {
+        const messageData: Omit<Message, 'id'> = {
           type: 'file',
           username,
           fileData,
@@ -158,10 +151,8 @@ function App() {
     }
   };
 
-  // Gestion de l'envoi de message vocal (dummy pour compatibilité)
   const handleSendAudio = async (audioBase64: string) => {
-    // À adapter si chiffrement vocal nécessaire
-    const messageData: Message = {
+    const messageData: Omit<Message, 'id'> = {
       type: 'audio',
       username,
       fileData: audioBase64,
@@ -172,6 +163,12 @@ function App() {
 
   const handleCallUser = (userToCall: string) => {
     setCallingUser(userToCall);
+  };
+
+  // Suppression d'un message
+  const handleDeleteMessage = (id: number) => {
+    console.log('[CLIENT] Demande suppression id:', id);
+    socket?.emit('delete message', { id });
   };
 
   // Déchiffrement lors de la réception d'un message
@@ -194,6 +191,19 @@ function App() {
     };
   }, [socket, symmetricKey]);
 
+  useEffect(() => {
+    if (!socket) return;
+    // Suppression d'un message côté client
+    const handleMessageDeleted = ({ id }: { id: number }) => {
+      console.log('[CLIENT] Message supprimé reçu id:', id);
+      setMessages(prev => prev.filter(msg => msg.id !== id));
+    };
+    socket.on('message deleted', handleMessageDeleted);
+    return () => {
+      socket.off('message deleted', handleMessageDeleted);
+    };
+  }, [socket]);
+
   if (!username) {
     return <WelcomeScreen onJoin={handleJoin} />;
   }
@@ -209,11 +219,12 @@ function App() {
         />
         <div className="flex-1 flex flex-col">
           <main className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map((msg: Message, index: number) => (
+            {messages.filter(msg => typeof msg.id === 'number').map((msg: Message, index: number) => (
               <ChatMessage 
-                key={index} 
+                key={msg.id || index} 
                 message={msg} 
                 isOwnMessage={msg.username === username}
+                onDeleteMessage={handleDeleteMessage}
               />
             ))}
             <div ref={messagesEndRef} />

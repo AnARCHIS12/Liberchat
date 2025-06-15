@@ -56,9 +56,11 @@
     <br />Sécurisé
 </td>
 <td align="center">
-    <img src="https://img.icons8.com/fluency/48/000000/palette.png" width="30"/>
+    <span style="font-size:2em;">🌙</span>
     <br />Thème Sombre
-    <img src="https://img.icons8.com/fluency/48/000000/design-style.png" width="30"/>
+</td>
+<td align="center">
+    <span style="font-size:2em;">🎨</span>
     <br />Style Moderne
 </td>
 </tr>
@@ -107,6 +109,11 @@
   - Support du mode hors-ligne (service worker)
   - Manifest et icônes adaptés pour mobile
 
+- 🗑️ **Suppression de message**
+  - Cliquez sur l’icône poubelle qui apparaît au survol de vos propres messages pour les supprimer.
+  - La suppression est confirmée par une modale au style du site.
+  - Le message est supprimé pour tous les utilisateurs en temps réel, de façon sécurisée (seul l’auteur peut supprimer son message).
+
 ### 🖼️ Médias et Expressions
 
 - 😀 **Support Complet des Emojis**
@@ -133,6 +140,7 @@
 - [Guide d'utilisation](docs/Utilisation.md)
 - [FAQ](docs/FAQ.md)
 - [Guide de contribution](docs/Contribution.md)
+- [Relais d'anonymat (proxy, Tor, VPN)](docs/Relais-Anonymat.md)
 
 
 
