@@ -1,6 +1,6 @@
 <div align="center">
 
-> 🚀 **Branche de développement active : `Librechat-3.5.0`**
+> 🚀 **Branche de développement active : `Librechat-3.5.7`**
 
 # 🚩✊ Liberchat — La Commune Numérique
 
@@ -14,7 +14,7 @@
 [![Logiciel Libre](https://img.shields.io/badge/Logiciel_Libre-100%25-black?style=for-the-badge)](#)
 [![Anarcho-syndicaliste](https://img.shields.io/badge/Anarcho--syndicaliste-Noir_&_Rouge-black?style=for-the-badge&labelColor=ff2800)](#)
 
-[![Version](https://img.shields.io/badge/Version%203.4.5-red?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/Version%203.5.7-red?style=for-the-badge)](#)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
@@ -250,7 +250,7 @@ Start Command: npm start
 
 ### Interface de chat
 
-<img src="Capture d’écran du 2025-06-01 13-53-17.png" alt="Aperçu chat LiberChat" width="350" style="border-radius: 12px; box-shadow: 0 2px 12px #0004;" />
+<img src="https://github.com/AnARCHIS12/Liberchat/blob/Liberchat3.5.5/Capture%20d%E2%80%99%C3%A9cran%20du%202025-06-14%2022-11-11.png" alt="Aperçu chat LiberChat" width="350" style="border-radius: 12px; box-shadow: 0 2px 12px #0004;" />
 
 </div>
 
