@@ -83,12 +83,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
   const handleSendImage = async () => {
     if (selectedImage) {
       await onSendFile(selectedImage);
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
       setSelectedImage(null);
       setImagePreview(null);
     }
   };
 
   const handleCancelImage = () => {
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
     setSelectedImage(null);
     setImagePreview(null);
   };
