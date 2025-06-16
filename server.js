@@ -25,7 +25,7 @@ app.use(
         mediaSrc: ["'self'", "data:"], // Autorise data: pour les médias
         imgSrc: ["'self'", "data:", "blob:"], // Autorise les images blob pour l'aperçu
         scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'"], 
         connectSrc: ["'self'", "ws://localhost:3000", "wss://liberchat-3-0-1.onrender.com", "wss://liberchat.onrender.com"],
       },
     },
@@ -240,8 +240,8 @@ io.on('connection', (socket) => {
     const msgIndex = messages.findIndex(m => m.id === id);
     if (msgIndex === -1) return;
     if (messages[msgIndex].username !== user.username) return;
-    // Stocke le contenu tel quel, sans aucun traitement
-    messages[msgIndex].content = content;
+    // Nettoyage XSS du contenu édité
+    messages[msgIndex].content = messages[msgIndex].type === 'text' ? xss(content) : content;
     messages[msgIndex].edited = true;
     io.emit('message edited', { id, content: messages[msgIndex].content });
     logger.info(`Message modifié par ${user.username}: ${id}`);
