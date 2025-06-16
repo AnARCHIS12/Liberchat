@@ -4,7 +4,6 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import winston from 'winston';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import xss from 'xss';
@@ -12,24 +11,8 @@ import xss from 'xss';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Logger
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' }),
-  ],
-});
-
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
-}
+// Winston/logging désactivé pour confidentialité totale
+const logger = { info: () => {}, error: () => {}, warn: () => {}, debug: () => {} };
 
 const app = express();
 
