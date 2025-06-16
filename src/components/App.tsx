@@ -39,6 +39,9 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [isFallbackCrypto, setIsFallbackCrypto] = useState(false);
   const [replyTo, setReplyTo] = useState<Message | null>(null);
+  const [theme, setTheme] = useState<'light' | 'dark'>(
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -520,6 +523,11 @@ function App() {
     });
   }
 
+  useEffect(() => {
+    document.body.classList.remove('theme-light', 'theme-dark');
+    document.body.classList.add(theme === 'dark' ? 'theme-dark' : 'theme-light');
+  }, [theme]);
+
   if (keyPrompt) {
     return (
       <div className="relative min-h-screen bg-gradient-to-br from-black via-red-950 to-black text-white font-sans flex flex-col">
@@ -590,15 +598,20 @@ function App() {
   }
 
   return (
-    <div className="h-screen min-h-0 flex flex-col bg-gradient-to-br from-black via-red-950 to-black text-white font-sans" style={{height:'100dvh', minHeight:'0'}}>
-      <Header onLogout={handleLogout} isLoggedIn={!!username} />
+    <div className="h-screen flex flex-col bg-gray-900 text-white">
+      <Header 
+        onLogout={handleLogout} 
+        isLoggedIn={!!username} 
+        theme={theme} 
+        onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')} 
+      />
       <div className="flex-1 flex flex-col sm:flex-row overflow-hidden min-h-0">
         <aside className="hidden sm:block w-full sm:w-64 bg-black border-r-4 border-red-700 flex-shrink-0 z-0">
           <UserList users={users} currentUser={username} />
         </aside>
         <div className="flex-1 flex flex-col bg-black/80 border-l-0 sm:border-l-4 border-red-700 min-h-0">
           <main className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.filter(msg => typeof msg.id === 'number').map((msg: Message, index: number) => (
+            {messages.filter(msg => typeof msg.id === 'number').map((msg: Message) => (
               <ChatMessage
                 key={msg.id}
                 message={msg}

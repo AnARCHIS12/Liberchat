@@ -1,6 +1,6 @@
 <div align="center">
 
-> 🚀 **Branche de développement active : `Librechat-6.1.0`**
+> 🚀 **Branche de développement active : `Liberchat-6.1.5`**
 
 # 🚩✊ Liberchat — La Commune Numérique
 
@@ -14,7 +14,7 @@
 [![Logiciel Libre](https://img.shields.io/badge/Logiciel_Libre-100%25-black?style=for-the-badge)](#)
 [![Anarcho-syndicaliste](https://img.shields.io/badge/Anarcho--syndicaliste-Noir_&_Rouge-black?style=for-the-badge&labelColor=ff2800)](#)
 
-[![Version](https://img.shields.io/badge/Version%206.1.0-red?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/Version%206.1.5-red?style=for-the-badge)](#)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
@@ -109,6 +109,17 @@
   - Support du mode hors-ligne (service worker)
   - Manifest et icônes adaptés pour mobile
 
+
+## Nouveautés
+
+### 🎨 Mode Light
+
+Vous pouvez désormais profiter d'une interface en **mode clair** !  
+Pour activer le mode light :
+1. Ouvrez les **Paramètres** de l'application.
+2. Sélectionnez l'option **Mode clair**.
+
+> 💡 Astuce : Vous pouvez basculer à tout moment entre le mode sombre et le mode clair selon vos préférences.
 
 ## 🗑️✏️ Fonctionnalités de gestion des messages
 
@@ -239,6 +250,8 @@ Start Command: npm start
 4. **Commence à chatter !**
    - Envoie des messages, des fichiers, des emojis…
    - Profite du chiffrement de bout en bout.
+
+- Pour activer le mode light, rendez-vous dans les paramètres et sélectionnez "Mode clair".
 
 <div align="center">
 
