@@ -250,8 +250,8 @@ io.on('connection', (socket) => {
     const msgIndex = messages.findIndex(m => m.id === id);
     if (msgIndex === -1) return;
     if (messages[msgIndex].username !== user.username) return;
-    // Nettoyage XSS
-    messages[msgIndex].content = xss(content);
+    // Stocke le contenu tel quel, sans aucun traitement
+    messages[msgIndex].content = content;
     messages[msgIndex].edited = true;
     io.emit('message edited', { id, content: messages[msgIndex].content });
     logger.info(`Message modifié par ${user.username}: ${id}`);

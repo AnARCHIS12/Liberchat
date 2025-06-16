@@ -162,7 +162,19 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (message.type === 'text') {
-      if (editValue.trim() && editValue !== message.content && socket) {
+      if (editValue.trim() && editValue !== message.content && socket && symmetricKey && encryptMessageE2EE && encryptMessageFallback) {
+        let encryptedContent;
+        if (window.crypto && window.crypto.subtle && typeof symmetricKey !== 'string') {
+          encryptedContent = await encryptMessageE2EE(editValue, symmetricKey);
+        } else if (typeof symmetricKey === 'string') {
+          encryptedContent = encryptMessageFallback(editValue, symmetricKey);
+        } else {
+          alert('Aucune méthode de chiffrement disponible pour les messages texte.');
+          return;
+        }
+        socket.emit('edit message', { id: message.id, content: JSON.stringify(encryptedContent) });
+      } else if (editValue.trim() && editValue !== message.content && socket) {
+        // Cas de secours si pas de clé, on envoie en clair (non recommandé)
         socket.emit('edit message', { id: message.id, content: editValue });
       }
       setIsEditing(false);

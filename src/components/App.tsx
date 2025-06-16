@@ -445,11 +445,27 @@ function App() {
 
   // Gestion de la modification d'un message côté client
   useEffect(() => {
-    if (!socket) return;
-    const handleMessageEdited = ({ id, content }: { id: number; content: string }) => {
+    if (!socket || !symmetricKey) return;
+    const handleMessageEdited = async ({ id, content }: { id: number; content: string }) => {
+      let decrypted = content;
+      try {
+        if (
+          typeof content === 'string' &&
+          content.length > 0 &&
+          content.trim().startsWith('{') &&
+          content.trim().endsWith('}')
+        ) {
+          const encrypted = JSON.parse(content);
+          if (encrypted && encrypted.iv && encrypted.content) {
+            decrypted = await decryptMessageE2EE(encrypted, symmetricKey);
+          }
+        }
+      } catch (e) {
+        // Si déchiffrement impossible, on affiche le contenu brut
+      }
       setMessages(prev => prev.map(msg =>
         msg.id === id
-          ? { ...msg, content, edited: true } // On met à jour le contenu et le flag edited
+          ? { ...msg, content: decrypted, edited: true }
           : msg
       ));
     };
@@ -457,7 +473,7 @@ function App() {
     return () => {
       socket.off('message edited', handleMessageEdited);
     };
-  }, [socket]);
+  }, [socket, symmetricKey]);
 
   const handleReply = (msg: Message) => {
     setReplyTo(msg);
