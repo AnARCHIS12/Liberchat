@@ -283,12 +283,26 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
     <form onSubmit={handleSubmit} className="sticky bottom-0 flex flex-wrap items-end gap-2 bg-black border-t-4 border-red-700 p-2 sm:p-4 relative">
       {/* Affichage du message cité façon messagerie moderne */}
       {replyTo && (
-        <div className="absolute -top-16 left-0 w-full flex items-center justify-between px-3 py-2 bg-black/90 border-l-4 border-red-700 rounded-t-lg rounded-b-sm shadow-lg" style={{minHeight:'36px'}}>
-          <div className="truncate max-w-[80%]">
-            <div className="text-xs text-red-400 font-mono mb-0.5">{replyTo.username}</div>
-            <div className="text-sm text-gray-200 font-mono truncate">
-              {replyTo.type === 'text' ? (replyTo.content?.slice(0, 80) || '') : replyTo.type === 'file' ? '[Fichier]' : replyTo.type === 'audio' ? '[Vocal]' : replyTo.type === 'gif' ? '[GIF]' : '[Message]'}
-            </div>
+        <div className="absolute -top-20 left-0 w-full flex items-center justify-between px-3 py-2 bg-black/90 border-l-4 border-red-700 rounded-t-lg rounded-b-sm shadow-lg" style={{minHeight:'48px'}}>
+          <div className="flex items-center gap-2 max-w-[80%]">
+            {replyTo.type === 'file' && replyTo.fileData && replyTo.fileType && replyTo.fileType.startsWith('image/') ? (
+              <>
+                <img src={replyTo.fileData} alt="miniature" className="w-12 h-12 object-cover rounded border-2 border-white bg-black" style={{maxWidth:48,maxHeight:48}} />
+                <div className="flex flex-col min-w-0">
+                  <span className="text-xs text-red-400 font-mono mb-0.5 truncate">{replyTo.username}</span>
+                  {replyTo.fileName && (
+                    <span className="text-xs text-gray-200 font-mono break-words truncate">{replyTo.fileName}</span>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs text-red-400 font-mono mb-0.5 truncate">{replyTo.username}</span>
+                <span className="text-xs text-gray-200 font-mono truncate">
+                  {replyTo.type === 'text' ? (replyTo.content?.slice(0, 80) || '') : replyTo.type === 'audio' ? '[Vocal]' : replyTo.type === 'gif' ? '[GIF]' : ''}
+                </span>
+              </div>
+            )}
           </div>
           <button type="button" onClick={() => onReplyHandled && onReplyHandled()} className="ml-2 text-gray-400 hover:text-red-500 p-0.5 rounded focus:outline-none" title="Annuler la réponse" aria-label="Annuler la réponse">×</button>
         </div>

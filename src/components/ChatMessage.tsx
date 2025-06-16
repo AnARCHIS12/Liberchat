@@ -210,11 +210,25 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
       <div className={`group rounded-xl px-2 sm:px-4 py-1 sm:py-2 mb-0.5 max-w-[90vw] sm:max-w-lg shadow-lg border-2 ${isOwnMessage ? 'bg-red-700/80 border-white text-white' : 'bg-black/80 border-red-700 text-white'} relative`}>
         {/* Affichage de la citation si replyTo existe */}
         {message.replyTo && (
-          <div className="mb-2 px-3 py-1 bg-black/95 border-l-4 border-red-700 rounded-lg shadow-inner max-w-[220px] sm:max-w-[320px]">
-            <div className="text-[11px] text-red-400 font-mono mb-0.5 truncate">{message.replyTo.username}</div>
-            <div className="text-xs text-gray-200 font-mono break-words truncate">
-              {message.replyTo.type === 'text' ? (message.replyTo.content?.slice(0, 60) || '') : message.replyTo.type === 'file' ? '[Fichier]' : message.replyTo.type === 'audio' ? '[Vocal]' : message.replyTo.type === 'gif' ? '[GIF]' : '[Message]'}
-            </div>
+          <div className="mb-2 px-3 py-1 bg-black/95 border-l-4 border-red-700 rounded-lg shadow-inner max-w-[260px] sm:max-w-[360px] flex items-center gap-2">
+            {message.replyTo.type === 'file' && message.replyTo.fileData && message.replyTo.fileType && message.replyTo.fileType.startsWith('image/') ? (
+              <>
+                <img src={message.replyTo.fileData} alt="miniature" className="w-16 h-16 object-cover rounded border-2 border-white bg-black" style={{maxWidth:64,maxHeight:64}} />
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[11px] text-red-400 font-mono mb-0.5 truncate">{message.replyTo.username}</span>
+                  {message.replyTo.fileName && (
+                    <span className="text-xs text-gray-200 font-mono break-words truncate">{message.replyTo.fileName}</span>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col min-w-0">
+                <span className="text-[11px] text-red-400 font-mono mb-0.5 truncate">{message.replyTo.username}</span>
+                <span className="text-xs text-gray-200 font-mono break-words truncate">
+                  {message.replyTo.type === 'text' ? (message.replyTo.content?.slice(0, 60) || '') : message.replyTo.type === 'audio' ? '[Vocal]' : message.replyTo.type === 'gif' ? '[GIF]' : '[Message]'}
+                </span>
+              </div>
+            )}
           </div>
         )}
         {message.username && message.type !== 'system' && (

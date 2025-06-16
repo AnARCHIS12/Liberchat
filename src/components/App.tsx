@@ -112,12 +112,13 @@ function App() {
   const handleSendMessage = async (message: string, replyTo?: Message | null) => {
     if (!symmetricKey) return;
     const encrypted = await encryptMessageE2EE(message, symmetricKey);
-    const messageData: Omit<Message, 'id'> & { replyTo?: { id: number; username?: string; content?: string; type?: string } } = {
+    // On transmet tout l'objet replyTo pour permettre l'affichage complet (image, nom, etc.)
+    const messageData: Omit<Message, 'id'> & { replyTo?: Message } = {
       type: 'text',
       username,
       content: JSON.stringify(encrypted),
       timestamp: Date.now(),
-      ...(replyTo ? { replyTo: { id: replyTo.id, username: replyTo.username, content: replyTo.content, type: replyTo.type } } : {})
+      ...(replyTo ? { replyTo } : {})
     };
     socket?.emit('chat message', messageData);
   };
