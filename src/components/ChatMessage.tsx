@@ -49,7 +49,16 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
 
   const renderContent = () => {
     if (message.type === 'text') {
-      const contentStr = typeof message.content === 'string' ? message.content : '';
+      // Masquer tout message qui n'est pas du texte lisible (ex: JSON chiffré ou texte illisible)
+      if (
+        typeof message.content !== 'string' ||
+        message.content.trim() === '' ||
+        (message.content.trim().startsWith('{') && message.content.trim().endsWith('}')) ||
+        /[{}\[\]"]/.test(message.content) // Si le texte contient des caractères typiques du JSON, on masque
+      ) {
+        return null;
+      }
+      const contentStr = message.content;
       const parts = contentStr.split(mentionRegex);
       return (
         <p className="break-words text-sm sm:text-base font-mono text-white">
