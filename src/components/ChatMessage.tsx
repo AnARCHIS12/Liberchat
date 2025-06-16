@@ -12,24 +12,31 @@ interface Message {
   gifUrl?: string;
   timestamp: number;
   replyTo?: Message; // Ajout de la propriété replyTo
+  edited?: boolean; // Ajout du flag pour afficher (modifié)
 }
 
 interface ChatMessageProps {
   message: Message;
   isOwnMessage: boolean;
   onDeleteMessage?: (id: number) => void;
-  onReply?: (username: string) => void; // Ajout pour la réponse
+  onReply?: (msg: Message) => void;
+  socket?: any;
+  symmetricKey?: CryptoKey | string | null;
+  encryptMessageE2EE?: (msg: string, key: CryptoKey | string) => Promise<any>;
+  encryptMessageFallback?: (msg: string, key: string) => any;
 }
 
-// Verrou global pour bloquer le menu contextuel après une prévisualisation image
-let blockMenu = false;
-
-const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => void }> = ({ message, isOwnMessage, onDeleteMessage, onReply }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDeleteMessage, onReply, socket, symmetricKey, encryptMessageE2EE, encryptMessageFallback }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [menuPos, setMenuPos] = useState<{x: number, y: number} | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(message.type === 'text' ? message.content || '' : '');
+  const [editFile, setEditFile] = useState<File | null>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [audioError, setAudioError] = React.useState(false);
 
   const formatTime = (timestamp: number) => {
     return new Date(timestamp).toLocaleTimeString([], { 
@@ -56,12 +63,15 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
             }
             return part;
           })}
+          {message.edited && (
+            <span className="text-xs text-gray-400 ml-2">(modifié)</span>
+          )}
         </p>
       );
     } else if (message.type === 'file') {
       if (message.fileType?.startsWith('image/')) {
         return (
-          <div className="max-w-[160px] sm:max-w-[220px]">
+          <div className="max-w-[160px] sm:max-w-[220px] flex flex-col items-center">
             <img 
               src={message.fileData} 
               alt={message.fileName || 'Image'}
@@ -70,16 +80,18 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
               onContextMenu={handleImageEvent}
               onTouchStart={handleImageEvent}
             />
-            <p className="text-xs sm:text-sm text-red-300 mt-1 truncate font-mono">{message.fileName}</p>
+            <p className="text-xs sm:text-sm text-red-300 mt-1 truncate font-mono break-all max-w-full overflow-hidden">{message.fileName}</p>
+            {message.edited && (
+              <span className="text-xs text-gray-400 mt-1">(modifié)</span>
+            )}
             {modalOpen && (
-              <ImageModal src={message.fileData!} alt={message.fileName} onClose={() => { setModalOpen(false); setShowMenu(false); blockMenu = true; setTimeout(() => { blockMenu = false; }, 500); }} />
+              <ImageModal src={message.fileData!} alt={message.fileName} onClose={() => { setModalOpen(false); setShowMenu(false); }} />
             )}
           </div>
         );
       }
       return <span className="text-red-400 text-xs sm:text-sm">Fichier non supporté</span>;
     } else if (message.type === 'audio' && message.fileData) {
-      const [audioError, setAudioError] = React.useState(false);
       const preventContextMenu = (e: React.MouseEvent<HTMLAudioElement>) => e.preventDefault();
       return (
         <div className="flex flex-col items-center w-full">
@@ -99,6 +111,9 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
           ) : (
             <span className="text-xs text-gray-400 mt-1 font-mono">Message vocal</span>
           )}
+          {message.edited && (
+            <span className="text-xs text-gray-400 mt-1">(modifié)</span>
+          )}
         </div>
       );
     } else if (message.type === 'gif') {
@@ -117,10 +132,6 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
     return null;
   };
 
-  const handleDelete = () => {
-    setShowConfirm(true);
-  };
-
   const confirmDelete = () => {
     setShowConfirm(false);
     if (onDeleteMessage && typeof message.id === 'number') {
@@ -132,82 +143,109 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
     setShowConfirm(false);
   };
 
-  const handleReplyClick = () => {
-    if (message.username && message.type !== 'system' && onReply) {
-      onReply(message);
-    }
-  };
-
-  const handleContextMenu = (e: React.MouseEvent) => {
-    if (blockMenu) {
-      e.preventDefault();
-      blockMenu = false;
-      return;
-    }
-    if (message.type === 'system') return;
-    e.preventDefault();
-    setShowMenu(true);
-    setMenuPos({ x: e.clientX, y: e.clientY });
-  };
-
-  // Pour mobile : appui long uniquement (pas de menu sur simple tap)
-  let touchTimer: NodeJS.Timeout;
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (message.type === 'system') return;
-    touchTimer = setTimeout(() => {
-      if (!blockMenu) {
-        setShowMenu(true);
-        setMenuPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
-      }
-    }, 250); // délai réduit à 250ms
-  };
-  const handleTouchEnd = () => clearTimeout(touchTimer);
-
-  // Détection mobile
-  const isMobile = typeof window !== 'undefined' && /android|iphone|ipad|ipod|opera mini|iemobile|mobile/i.test(navigator.userAgent);
-
-  const handleClick = (e: React.MouseEvent) => {
-    if (!isMobile) return;
-    if (message.type === 'system') return;
-    e.preventDefault();
-    setShowMenu(true);
-    setMenuPos({ x: e.clientX, y: e.clientY });
-  };
-
   const handleReplyMenu = () => {
     setShowMenu(false);
     if (onReply) onReply(message);
   };
-  const handleCloseMenu = () => setShowMenu(false);
-
-  // Affichage du menu contextuel toujours en bas de la bulle
-  React.useEffect(() => {
-    if (showMenu && bubbleRef.current) {
-      const rect = bubbleRef.current.getBoundingClientRect();
-      if (isOwnMessage) {
-        setMenuPos({ x: rect.right, y: rect.bottom }); // à droite pour ses propres messages
-      } else {
-        setMenuPos({ x: rect.left, y: rect.bottom }); // à gauche pour les autres
-      }
-    }
-  }, [showMenu, isOwnMessage]);
+  const handleCloseMenu = () => {
+    setShowMenu(false);
+    setMenuPos(null);
+  };
 
   // Empêche le menu contextuel sur clic ou appui long image
   const handleImageEvent = (e: React.SyntheticEvent) => {
     e.stopPropagation();
-    blockMenu = true;
     if (e.type === 'click') setModalOpen(true);
+  };
+
+  // Ajout de la gestion de la modification
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (message.type === 'text') {
+      if (editValue.trim() && editValue !== message.content && socket) {
+        socket.emit('edit message', { id: message.id, content: editValue });
+      }
+      setIsEditing(false);
+    } else if ((message.type === 'file' || message.type === 'audio') && editFile && socket && symmetricKey && encryptMessageE2EE && encryptMessageFallback) {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const fileData = reader.result as string;
+        let encryptedFile;
+        if (window.crypto && window.crypto.subtle && typeof symmetricKey !== 'string') {
+          encryptedFile = await encryptMessageE2EE(fileData, symmetricKey);
+        } else if (typeof symmetricKey === 'string') {
+          encryptedFile = encryptMessageFallback(fileData, symmetricKey);
+        } else {
+          alert('Aucune méthode de chiffrement disponible pour les fichiers.');
+          return;
+        }
+        socket.emit('edit message', {
+          id: message.id,
+          fileData: JSON.stringify(encryptedFile),
+          fileType: editFile.type,
+          fileName: editFile.name
+        });
+        setIsEditing(false);
+        setEditFile(null);
+      };
+      reader.readAsDataURL(editFile);
+    } else {
+      setIsEditing(false);
+    }
+  };
+
+  // Gestion appui long mobile pour menu contextuel
+  let touchTimer: NodeJS.Timeout;
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if ((isEditing && message.type === 'audio') || message.type === 'system') return;
+    touchTimer = setTimeout(() => {
+      if (isMobile()) {
+        // Centre le menu sur mobile
+        setMenuPos({
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+        });
+      } else {
+        setMenuPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+      }
+      setShowMenu(true);
+    }, 100);
+  };
+  const handleTouchEnd = () => {
+    clearTimeout(touchTimer);
+  };
+
+  // Synchronise editValue avec le message courant à chaque ouverture de l'édition
+  React.useEffect(() => {
+    if (isEditing && message.type === 'text') {
+      setEditValue(message.content || '');
+    }
+  }, [isEditing, message.content, message.type]);
+
+  // Gestion clic droit desktop pour menu contextuel
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (isEditing && message.type === 'audio') return;
+    e.preventDefault();
+    if (isMobile()) {
+      setMenuPos({
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+      });
+    } else {
+      setMenuPos({ x: e.clientX, y: e.clientY });
+    }
+    setShowMenu(true);
   };
 
   return (
     <div
       className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}
-      onContextMenu={handleContextMenu}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onContextMenu={handleContextMenu}
       ref={bubbleRef}
     >
-      <div className={`group rounded-xl px-2 sm:px-4 py-1 sm:py-2 mb-0.5 max-w-[90vw] sm:max-w-lg shadow-lg border-2 ${isOwnMessage ? 'bg-red-700/80 border-white text-white' : 'bg-black/80 border-red-700 text-white'} relative`}>
+      <div className={`group rounded-xl px-2 sm:px-4 py-1 sm:py-2 mb-0.5 max-w-[90vw] sm:max-w-lg shadow-lg border-2 ${isOwnMessage ? 'bg-red-700/80 border-white text-white' : 'bg-black/80 border-red-700 text-white'} relative overflow-x-auto`}>
         {/* Affichage de la citation si replyTo existe */}
         {message.replyTo && (
           <div className="mb-2 px-3 py-1 bg-black/95 border-l-4 border-red-700 rounded-lg shadow-inner max-w-[260px] sm:max-w-[360px] flex items-center gap-2">
@@ -244,7 +282,22 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
             {isOwnMessage ? 'Vous' : message.username}
           </span>
         )}
-        {renderContent()}
+        {isEditing && message.type === 'text' ? (
+          <form onSubmit={handleEditSubmit} className="flex gap-2 items-center">
+            <input
+              type="text"
+              value={editValue}
+              onChange={e => setEditValue(e.target.value)}
+              className="flex-1 px-2 py-1 rounded border border-red-700 text-black font-mono"
+              autoFocus
+              maxLength={500}
+            />
+            <button type="submit" className="bg-red-700 text-white px-2 py-1 rounded font-mono">OK</button>
+            <button type="button" onClick={() => { setIsEditing(false); setEditFile(null); }} className="bg-black text-red-400 px-2 py-1 rounded font-mono">Annuler</button>
+          </form>
+        ) : (
+          renderContent()
+        )}
         {showConfirm && (
           <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/90">
             <div className="bg-black border-2 border-red-700 rounded-xl px-6 py-5 shadow-lg flex flex-col items-center max-w-sm w-full">
@@ -256,34 +309,97 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
             </div>
           </div>
         )}
-        {/* Menu contextuel pour répondre */}
-        {showMenu && menuPos && (
-          <div
-            className="fixed z-50 bg-black border border-red-700 rounded shadow-lg text-xs text-white font-mono animate-fade-in"
-            style={{ top: menuPos.y, left: isOwnMessage ? undefined : menuPos.x, right: isOwnMessage ? `calc(100vw - ${menuPos.x}px)` : 'auto', minWidth: 110 }}
-            onClick={handleCloseMenu}
-          >
-            <button
-              className="block w-full text-left px-4 py-2 hover:bg-red-700/80 hover:text-white"
-              onClick={e => { e.stopPropagation(); handleReplyMenu(); }}
-            >
-              ↩️ Répondre
-            </button>
-            {isOwnMessage && onDeleteMessage && (
-              <button
-                className="block w-full text-left px-4 py-2 bg-black text-red-400 font-mono hover:bg-red-700/80 hover:text-white border-t border-red-700 transition-colors"
-                onClick={e => { e.stopPropagation(); onDeleteMessage(message.id); handleCloseMenu(); }}
+        {/* Menu contextuel pour répondre/modifier/supprimer */}
+        {showMenu && (
+          isMobile() ? (
+            // Menu mobile façon Signal : petit menu flottant centré sous le doigt (plus petit)
+            <div className="fixed inset-0 z-50" style={{ pointerEvents: 'none' }}>
+              <div
+                className="absolute bg-black border border-red-700 rounded-xl shadow-xl text-sm text-white font-mono w-40 max-w-[90vw] py-1"
+                style={{
+                  left: (menuPos?.x ?? window.innerWidth / 2) - 80, // w-40 = 160px
+                  top: (menuPos?.y ?? window.innerHeight / 2) + 8,
+                  minWidth: 120,
+                  pointerEvents: 'auto',
+                  transition: 'none',
+                  animation: 'none',
+                }}
               >
-                🗑️ Supprimer
-              </button>
-            )}
-            <button
-              className="block w-full text-left px-4 py-2 bg-black text-red-400 font-mono hover:bg-gray-800 hover:text-red-400 border-t border-red-700 transition-colors"
-              onClick={e => { e.stopPropagation(); handleCloseMenu(); }}
-            >
-              ✖️ Annuler
-            </button>
-          </div>
+                <button
+                  className="block w-full text-left px-3 py-2 hover:bg-red-700/80 hover:text-white"
+                  onClick={e => { e.stopPropagation(); handleReplyMenu(); }}
+                >
+                  ↩️ Répondre
+                </button>
+                {isOwnMessage && message.type === 'text' && (
+                  <button
+                    className="block w-full text-left px-3 py-2 text-red-400 font-mono hover:bg-red-700/80 hover:text-white border-t border-red-700 transition-colors"
+                    onClick={e => { e.stopPropagation(); setShowMenu(false); setIsEditing(true); setEditValue(message.content || ''); }}
+                  >
+                    ✏️ Modifier
+                  </button>
+                )}
+                {isOwnMessage && onDeleteMessage && (
+                  <button
+                    className="block w-full text-left px-3 py-2 text-red-400 font-mono hover:bg-red-700/80 hover:text-white border-t border-red-700 transition-colors"
+                    onClick={e => { e.stopPropagation(); onDeleteMessage(message.id); handleCloseMenu(); }}
+                  >
+                    🗑️ Supprimer
+                  </button>
+                )}
+                <button
+                  className="block w-full text-left px-3 py-2 text-gray-400 font-mono hover:bg-gray-800 hover:text-white border-t border-red-700 transition-colors"
+                  onClick={e => { e.stopPropagation(); handleCloseMenu(); }}
+                >
+                  ✖️ Annuler
+                </button>
+              </div>
+            </div>
+          ) : (
+            // Menu desktop classique
+            menuPos && (
+              <div
+                ref={menuRef}
+                className="fixed z-50 bg-black border border-red-700 rounded shadow-lg text-xs text-white font-mono w-64 max-w-[90vw] py-2"
+                style={{
+                  top: menuPos.y,
+                  left: menuPos.x,
+                  minWidth: 110,
+                  transition: 'none',
+                  animation: 'none',
+                }}
+              >
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-red-700/80 hover:text-white"
+                  onClick={e => { e.stopPropagation(); handleReplyMenu(); }}
+                >
+                  ↩️ Répondre
+                </button>
+                {isOwnMessage && message.type === 'text' && (
+                  <button
+                    className="block w-full text-left px-4 py-2 bg-black text-red-400 font-mono hover:bg-red-700/80 hover:text-white border-t border-red-700 transition-colors"
+                    onClick={e => { e.stopPropagation(); setShowMenu(false); setIsEditing(true); setEditValue(message.content || ''); }}
+                  >
+                    ✏️ Modifier
+                  </button>
+                )}
+                {isOwnMessage && onDeleteMessage && (
+                  <button
+                    className="block w-full text-left px-4 py-2 bg-black text-red-400 font-mono hover:bg-red-700/80 hover:text-white border-t border-red-700 transition-colors"
+                    onClick={e => { e.stopPropagation(); onDeleteMessage(message.id); handleCloseMenu(); }}
+                  >
+                    🗑️ Supprimer
+                  </button>
+                )}
+                <button
+                  className="block w-full text-left px-4 py-2 bg-black text-red-400 font-mono hover:bg-gray-800 hover:text-white border-t border-red-700 transition-colors"
+                  onClick={e => { e.stopPropagation(); handleCloseMenu(); }}
+                >
+                  ✖️ Annuler
+                </button>
+              </div>
+            )
+          )
         )}
       </div>
       <span className="ml-1 sm:ml-2 mt-0.5 text-[10px] sm:text-xs text-gray-400 font-mono opacity-80">
@@ -292,5 +408,10 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
     </div>
   );
 };
+
+// Helper mobile
+function isMobile() {
+  return typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+}
 
 export default ChatMessage;

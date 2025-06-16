@@ -1,6 +1,6 @@
 <div align="center">
 
-> 🚀 **Branche de développement active : `Librechat-3.5.7`**
+> 🚀 **Branche de développement active : `Librechat-6.1.0`**
 
 # 🚩✊ Liberchat — La Commune Numérique
 
@@ -14,7 +14,7 @@
 [![Logiciel Libre](https://img.shields.io/badge/Logiciel_Libre-100%25-black?style=for-the-badge)](#)
 [![Anarcho-syndicaliste](https://img.shields.io/badge/Anarcho--syndicaliste-Noir_&_Rouge-black?style=for-the-badge&labelColor=ff2800)](#)
 
-[![Version](https://img.shields.io/badge/Version%203.5.7-red?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/Version%206.1.0-red?style=for-the-badge)](#)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
@@ -109,10 +109,14 @@
   - Support du mode hors-ligne (service worker)
   - Manifest et icônes adaptés pour mobile
 
-- 🗑️ **Suppression de message**
-  - Cliquez sur l’icône poubelle qui apparaît au survol de vos propres messages pour les supprimer.
-  - La suppression est confirmée par une modale au style du site.
-  - Le message est supprimé pour tous les utilisateurs en temps réel, de façon sécurisée (seul l’auteur peut supprimer son message).
+
+## 🗑️✏️ Fonctionnalités de gestion des messages
+
+- **Modification** : Seuls les messages texte peuvent être modifiés après envoi.
+- **Suppression** : Tous les types de messages peuvent être supprimés par leur auteur.
+- **Menu contextuel** : Accessible par clic droit ou appui long, il permet de répondre, modifier (texte uniquement) ou supprimer un message.
+- **Expérience mobile** : Le menu contextuel est adapté au mobile (taille réduite, pas de scroll inutile).
+- **Messages non modifiables** : Les messages audio et images ne peuvent pas être modifiés pour garantir l'intégrité des fichiers partagés.
 
 ### 🖼️ Médias et Expressions
 

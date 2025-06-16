@@ -443,6 +443,22 @@ function App() {
     };
   }, [socket]);
 
+  // Gestion de la modification d'un message côté client
+  useEffect(() => {
+    if (!socket) return;
+    const handleMessageEdited = ({ id, content }: { id: number; content: string }) => {
+      setMessages(prev => prev.map(msg =>
+        msg.id === id
+          ? { ...msg, content, edited: true } // On met à jour le contenu et le flag edited
+          : msg
+      ));
+    };
+    socket.on('message edited', handleMessageEdited);
+    return () => {
+      socket.off('message edited', handleMessageEdited);
+    };
+  }, [socket]);
+
   const handleReply = (msg: Message) => {
     setReplyTo(msg);
   };
@@ -565,21 +581,25 @@ function App() {
           <UserList users={users} currentUser={username} />
         </aside>
         <div className="flex-1 flex flex-col bg-black/80 border-l-0 sm:border-l-4 border-red-700 min-h-0">
-          <main className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-4 min-h-0" style={{WebkitOverflowScrolling:'touch'}}>
+          <main className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.filter(msg => typeof msg.id === 'number').map((msg: Message, index: number) => (
-              <ChatMessage 
-                key={msg.id || index} 
-                message={msg} 
+              <ChatMessage
+                key={msg.id}
+                message={msg}
                 isOwnMessage={msg.username === username}
                 onDeleteMessage={handleDeleteMessage}
-                onReply={() => handleReply(msg)}
+                onReply={handleReply}
+                socket={socket}
+                symmetricKey={symmetricKey}
+                encryptMessageE2EE={encryptMessageE2EE}
+                encryptMessageFallback={encryptMessageFallback}
               />
             ))}
             <div ref={messagesEndRef} />
           </main>
           <div className="flex-shrink-0 sticky bottom-0 z-10 bg-black/95 border-t-2 border-red-700">
-            <ChatInput 
-              onSendMessage={handleSendMessage} 
+            <ChatInput
+              onSendMessage={handleSendMessage}
               onSendFile={handleSendFile}
               onSendAudio={handleSendAudio}
               isConnected={isConnected}

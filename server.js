@@ -243,6 +243,20 @@ io.on('connection', (socket) => {
     console.log('[SUPPRESSION] Message supprimé id:', id);
   });
 
+  // Modification d'un message
+  socket.on('edit message', ({ id, content }) => {
+    const user = users.get(socket.id);
+    if (!user || !id) return;
+    const msgIndex = messages.findIndex(m => m.id === id);
+    if (msgIndex === -1) return;
+    if (messages[msgIndex].username !== user.username) return;
+    // Nettoyage XSS
+    messages[msgIndex].content = xss(content);
+    messages[msgIndex].edited = true;
+    io.emit('message edited', { id, content: messages[msgIndex].content });
+    logger.info(`Message modifié par ${user.username}: ${id}`);
+  });
+
   socket.on('userJoined', (username) => {
     const systemMessage = {
       id: nextMessageId++,
