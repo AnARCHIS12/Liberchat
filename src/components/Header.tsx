@@ -20,9 +20,9 @@ const Header: React.FC<HeaderProps & { theme?: 'light' | 'dark', onToggleTheme?:
         {onToggleTheme && theme && (
           <button
             onClick={onToggleTheme}
-            className={`flex items-center gap-2 px-3 py-1 rounded-full shadow border-2 border-red-700 font-bold font-mono transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-700
-              ${theme === 'dark' ? 'bg-black/80 text-white hover:bg-white hover:text-red-700' : 'bg-white/90 text-black hover:bg-red-700 hover:text-white'}`}
-            style={{ fontSize: 15 }}
+            className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 rounded-full shadow border-2 border-red-700 font-bold font-mono transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-700
+              ${theme === 'dark' ? 'bg-black/80 text-white hover:bg-white hover:text-red-700' : 'bg-white/90 text-black hover:bg-red-700 hover:text-white'} text-sm sm:text-base`}
+            style={{ fontSize: undefined }}
             title={theme === 'dark' ? 'Passer en thème clair' : 'Passer en thème sombre'}
           >
             {theme === 'dark' ? (
@@ -35,7 +35,7 @@ const Header: React.FC<HeaderProps & { theme?: 'light' | 'dark', onToggleTheme?:
         {isLoggedIn && onLogout && (
           <button
             onClick={onLogout}
-            className="px-2 sm:px-3 py-1 sm:py-1 text-xs sm:text-sm bg-gradient-to-r from-red-700 to-black text-white font-bold rounded border border-white hover:from-black hover:to-red-700 transition-all uppercase tracking-widest shadow ml-0 sm:ml-4 min-w-0 w-auto"
+            className="px-1 sm:px-2 py-0.5 text-[10px] sm:text-xs bg-gradient-to-r from-red-700 to-black text-white font-bold rounded border border-white hover:from-black hover:to-red-700 transition-all uppercase tracking-widest shadow ml-0 sm:ml-4 min-w-0 w-auto"
           >
             Déconnexion
           </button>

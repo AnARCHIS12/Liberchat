@@ -304,18 +304,18 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
           </span>
         )}
         {isEditing && message.type === 'text' ? (
-          <form onSubmit={handleEditSubmit} className="flex gap-2 items-center">
+          <form onSubmit={handleEditSubmit} className="flex gap-1 sm:gap-2 items-center w-full mt-1">
             <input
               type="text"
               value={editValue}
               onChange={e => setEditValue(e.target.value)}
-              className="flex-1 px-2 py-1 rounded border border-red-700 bg-white text-black font-mono dark:bg-black dark:text-white"
+              className="flex-1 px-2 py-1 rounded-lg border border-red-700 bg-white text-black font-mono dark:bg-black dark:text-white text-xs sm:text-sm focus:ring-2 focus:ring-red-700 outline-none shadow-sm"
               style={{ backgroundColor: 'white', color: 'black' }}
               autoFocus
               maxLength={500}
             />
-            <button type="submit" className="bg-red-700 text-white px-2 py-1 rounded font-mono">OK</button>
-            <button type="button" onClick={() => { setIsEditing(false); setEditFile(null); }} className="bg-black text-red-400 px-2 py-1 rounded font-mono">Annuler</button>
+            <button type="submit" className="bg-red-700 text-white px-2 py-1 rounded-lg font-mono text-xs sm:text-sm shadow hover:bg-red-800 active:scale-95 transition-all">OK</button>
+            <button type="button" onClick={() => { setIsEditing(false); setEditFile(null); }} className="bg-black text-red-400 px-2 py-1 rounded-lg font-mono text-xs sm:text-sm shadow hover:bg-red-900 active:scale-95 transition-all">Annuler</button>
           </form>
         ) : (
           renderContent()
@@ -337,25 +337,25 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
             // Menu mobile façon Signal : petit menu flottant centré sous le doigt (plus petit)
             <div className="fixed inset-0 z-50" style={{ pointerEvents: 'none' }}>
               <div
-                className="absolute bg-black border border-red-700 rounded-xl shadow-xl text-sm text-white font-mono w-40 max-w-[90vw] py-1"
+                className="absolute bg-black/95 border border-red-700 rounded-2xl shadow-2xl text-xs text-white font-mono w-36 max-w-[90vw] py-1 flex flex-col gap-1"
                 style={{
-                  left: (menuPos?.x ?? window.innerWidth / 2) - 80, // w-40 = 160px
+                  left: (menuPos?.x ?? window.innerWidth / 2) - 72, // w-36 = 144px
                   top: (menuPos?.y ?? window.innerHeight / 2) + 8,
-                  minWidth: 120,
+                  minWidth: 110,
                   pointerEvents: 'auto',
                   transition: 'none',
                   animation: 'none',
                 }}
               >
                 <button
-                  className="block w-full text-left px-3 py-2 hover:bg-red-700/80 hover:text-white"
+                  className="block w-full text-left px-3 py-1.5 rounded-xl hover:bg-red-700/80 hover:text-white active:scale-95 transition-all duration-150"
                   onClick={e => { e.stopPropagation(); handleReplyMenu(); }}
                 >
                   ↩️ Répondre
                 </button>
                 {isOwnMessage && message.type === 'text' && (
                   <button
-                    className="block w-full text-left px-3 py-2 text-red-400 font-mono hover:bg-red-700/80 hover:text-white border-t border-red-700 transition-colors"
+                    className="block w-full text-left px-3 py-1.5 rounded-xl text-red-400 font-mono hover:bg-red-700/80 hover:text-white border-t border-red-700 transition-all duration-150 active:scale-95"
                     onClick={e => { e.stopPropagation(); setShowMenu(false); setIsEditing(true); setEditValue(message.content || ''); }}
                   >
                     ✏️ Modifier
@@ -363,14 +363,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
                 )}
                 {isOwnMessage && onDeleteMessage && (
                   <button
-                    className="block w-full text-left px-3 py-2 text-red-400 font-mono hover:bg-red-700/80 hover:text-white border-t border-red-700 transition-colors"
+                    className="block w-full text-left px-3 py-1.5 rounded-xl text-red-400 font-mono hover:bg-red-700/80 hover:text-white border-t border-red-700 transition-all duration-150 active:scale-95"
                     onClick={e => { e.stopPropagation(); onDeleteMessage(message.id); handleCloseMenu(); }}
                   >
                     🗑️ Supprimer
                   </button>
                 )}
                 <button
-                  className="block w-full text-left px-3 py-2 text-gray-400 font-mono hover:bg-gray-800 hover:text-white border-t border-red-700 transition-colors"
+                  className="block w-full text-left px-3 py-1.5 rounded-xl text-gray-400 font-mono hover:bg-gray-800 hover:text-white border-t border-red-700 transition-all duration-150 active:scale-95"
                   onClick={e => { e.stopPropagation(); handleCloseMenu(); }}
                 >
                   ✖️ Annuler
