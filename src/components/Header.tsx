@@ -16,11 +16,12 @@ const Header: React.FC<HeaderProps & { theme?: 'light' | 'dark', onToggleTheme?:
         </h1>
         <span className="ml-2 px-2 py-1 bg-red-700 text-white text-xs rounded uppercase tracking-wider font-bold shadow hidden sm:inline">Commune</span>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-4">
         {onToggleTheme && theme && (
           <button
             onClick={onToggleTheme}
-            className="flex items-center gap-2 px-3 py-1 rounded-full shadow border-2 border-red-700 bg-white/90 dark:bg-black/80 text-red-700 dark:text-white font-bold font-mono hover:bg-red-700 hover:text-white dark:hover:bg-white dark:hover:text-red-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-700"
+            className={`flex items-center gap-2 px-3 py-1 rounded-full shadow border-2 border-red-700 font-bold font-mono transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-700
+              ${theme === 'dark' ? 'bg-black/80 text-white hover:bg-white hover:text-red-700' : 'bg-white/90 text-black hover:bg-red-700 hover:text-white'}`}
             style={{ fontSize: 15 }}
             title={theme === 'dark' ? 'Passer en thème clair' : 'Passer en thème sombre'}
           >
