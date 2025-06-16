@@ -295,11 +295,19 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
                   )}
                 </div>
               </>
+            ) : replyTo.type === 'audio' && replyTo.fileData ? (
+              <>
+                <span className="text-2xl mr-2">🎤</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-xs text-red-400 font-mono mb-0.5 truncate">{replyTo.username}</span>
+                  <span className="text-xs text-gray-200 font-mono break-words truncate">{replyTo.fileName || 'Message vocal'}</span>
+                </div>
+              </>
             ) : (
               <div className="flex flex-col min-w-0">
                 <span className="text-xs text-red-400 font-mono mb-0.5 truncate">{replyTo.username}</span>
                 <span className="text-xs text-gray-200 font-mono truncate">
-                  {replyTo.type === 'text' ? (replyTo.content?.slice(0, 80) || '') : replyTo.type === 'audio' ? '[Vocal]' : replyTo.type === 'gif' ? '[GIF]' : ''}
+                  {replyTo.type === 'text' ? (replyTo.content?.slice(0, 80) || '') : replyTo.type === 'gif' ? '[GIF]' : ''}
                 </span>
               </div>
             )}

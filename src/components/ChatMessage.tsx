@@ -221,11 +221,19 @@ const ChatMessage: React.FC<ChatMessageProps & { onReply?: (msg: Message) => voi
                   )}
                 </div>
               </>
+            ) : message.replyTo.type === 'audio' && message.replyTo.fileData ? (
+              <>
+                <audio src={message.replyTo.fileData} controls controlsList="nodownload noplaybackrate" className="w-24 h-8 mr-2 align-middle rounded border border-red-700 bg-black" style={{minWidth:80,maxWidth:120}} />
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[11px] text-red-400 font-mono mb-0.5 truncate">{message.replyTo.username}</span>
+                  <span className="text-xs text-gray-200 font-mono break-words truncate">{message.replyTo.fileName || 'Message vocal'}</span>
+                </div>
+              </>
             ) : (
               <div className="flex flex-col min-w-0">
                 <span className="text-[11px] text-red-400 font-mono mb-0.5 truncate">{message.replyTo.username}</span>
                 <span className="text-xs text-gray-200 font-mono break-words truncate">
-                  {message.replyTo.type === 'text' ? (message.replyTo.content?.slice(0, 60) || '') : message.replyTo.type === 'audio' ? '[Vocal]' : message.replyTo.type === 'gif' ? '[GIF]' : '[Message]'}
+                  {message.replyTo.type === 'text' ? (message.replyTo.content?.slice(0, 60) || '') : message.replyTo.type === 'gif' ? '[GIF]' : '[Message]'}
                 </span>
               </div>
             )}
