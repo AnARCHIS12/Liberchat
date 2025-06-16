@@ -209,7 +209,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
         setMenuPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
       }
       setShowMenu(true);
-    }, 100);
+    }, 400); // Augmenté de 100ms à 400ms pour réduire la sensibilité
   };
   const handleTouchEnd = () => {
     clearTimeout(touchTimer);
