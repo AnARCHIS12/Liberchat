@@ -27,11 +27,18 @@ app.use(
         scriptSrc: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         connectSrc: ["'self'", "ws://localhost:3000", "wss://liberchat-3-0-1.onrender.com", "wss://liberchat.onrender.com"],
-        // ...autres directives selon besoin...
       },
     },
+    referrerPolicy: { policy: "no-referrer" },
+    crossOriginResourcePolicy: { policy: "same-origin" },
+    crossOriginOpenerPolicy: { policy: "same-origin" },
+    crossOriginEmbedderPolicy: true,
+    hsts: { maxAge: 31536000, includeSubDomains: true, preload: true }
   })
 );
+
+// Désactive le header x-powered-by
+app.disable('x-powered-by');
 
 // Limiteur de requêtes (anti-DDoS)
 const limiter = rateLimit({ windowMs: 1 * 60 * 1000, max: 100 });
