@@ -309,7 +309,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
               type="text"
               value={editValue}
               onChange={e => setEditValue(e.target.value)}
-              className="flex-1 px-2 py-1 rounded border border-red-700 text-black font-mono"
+              className="flex-1 px-2 py-1 rounded border border-red-700 bg-white text-black font-mono dark:bg-black dark:text-white"
+              style={{ backgroundColor: 'white', color: 'black' }}
               autoFocus
               maxLength={500}
             />
