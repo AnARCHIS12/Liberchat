@@ -45,7 +45,35 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
     });
   };
 
-  const mentionRegex = /@([\w-]+)/g;
+  const urlRegex = /(https?:\/\/[\w\-._~:/?#[\]@!$&'()*+,;=%]+)|(www\.[\w\-._~:/?#[\]@!$&'()*+,;=%]+)/gi;
+
+  // Composant d'aperçu simple pour un lien (peut être enrichi plus tard)
+  const LinkPreview: React.FC<{ url: string }> = ({ url }) => {
+    const [meta, setMeta] = React.useState<{ title?: string; description?: string; image?: string }>({});
+    React.useEffect(() => {
+      // Appel à un service d'embed tiers ou API maison à ajouter ici si besoin
+      // Pour l'instant, on ne fait qu'un fetch du titre de la page
+      fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`)
+        .then(r => r.text())
+        .then(html => {
+          const doc = new DOMParser().parseFromString(html, 'text/html');
+          setMeta({
+            title: doc.querySelector('title')?.innerText,
+            description: doc.querySelector('meta[name="description"]')?.getAttribute('content') || undefined,
+            image: doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || undefined,
+          });
+        })
+        .catch(() => {});
+    }, [url]);
+    return (
+      <div className="border border-red-700 bg-black/80 rounded-lg p-2 mt-2 max-w-xs text-xs text-white">
+        {meta.image && <img src={meta.image} alt="aperçu" className="w-full max-h-32 object-cover rounded mb-1" />}
+        <div className="font-bold truncate">{meta.title || url}</div>
+        {meta.description && <div className="text-gray-300 truncate">{meta.description}</div>}
+        <a href={url} target="_blank" rel="noopener noreferrer" className="text-red-400 underline break-all">{url}</a>
+      </div>
+    );
+  };
 
   const renderContent = () => {
     if (message.type === 'text') {
@@ -59,23 +87,36 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
         return null;
       }
       const contentStr = message.content;
-      const parts = contentStr.split(mentionRegex);
+      // Découper le texte en parties (liens et texte)
+      const parts = [];
+      let lastIndex = 0;
+      let match;
+      while ((match = urlRegex.exec(contentStr)) !== null) {
+        if (match.index > lastIndex) {
+          parts.push({ text: contentStr.slice(lastIndex, match.index), url: null });
+        }
+        parts.push({ text: match[0], url: match[0].startsWith('http') ? match[0] : 'http://' + match[0] });
+        lastIndex = urlRegex.lastIndex;
+      }
+      if (lastIndex < contentStr.length) {
+        parts.push({ text: contentStr.slice(lastIndex), url: null });
+      }
       return (
-        <p className="break-words text-sm sm:text-base font-mono text-white">
-          {parts.map((part, i) => {
-            if (i % 2 === 1) {
-              return (
-                <span key={i} className="bg-red-700/80 text-white px-1 rounded font-bold hover:underline cursor-pointer transition">
-                  @{part}
-                </span>
-              );
-            }
-            return part;
-          })}
+        <div className="break-words text-sm sm:text-base font-mono text-white">
+          {parts.map((part, i) =>
+            part.url ? (
+              <React.Fragment key={i}>
+                <a href={part.url} target="_blank" rel="noopener noreferrer" className="text-red-400 underline break-all hover:text-red-200">{part.text}</a>
+                <LinkPreview url={part.url} />
+              </React.Fragment>
+            ) : (
+              <span key={i}>{part.text}</span>
+            )
+          )}
           {message.edited && (
             <span className="text-xs text-gray-400 ml-2">(modifié)</span>
           )}
-        </p>
+        </div>
       );
     } else if (message.type === 'file') {
       if (message.fileType?.startsWith('image/')) {
