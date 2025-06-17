@@ -7,6 +7,8 @@ import rateLimit from 'express-rate-limit';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import xss from 'xss';
+import fetch from 'node-fetch';
+import { JSDOM } from 'jsdom';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -76,6 +78,57 @@ const io = new Server(server, {
 app.use(express.static(join(__dirname, 'dist')));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Route pour récupérer les métadonnées d'un lien (titre, description, image)
+app.get('/api/link-preview', async (req, res) => {
+  const url = req.query.url;
+  if (!url || typeof url !== 'string') return res.status(400).json({ error: 'URL manquante' });
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Referer': url
+      },
+      redirect: 'follow'
+    });
+    const html = await response.text();
+    const dom = new JSDOM(html);
+    const doc = dom.window.document;
+    const title = doc.querySelector('title')?.textContent || url;
+    const description = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+    let imageRaw = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
+    // Si pas d'og:image, chercher la première image significative de la page
+    if (!imageRaw) {
+      const imgs = Array.from(doc.querySelectorAll('img'));
+      // Filtrer les images trop petites ou typiquement des logos/icônes
+      const imgCandidate = imgs.find(img => {
+        const src = img.getAttribute('src') || '';
+        if (!src) return false;
+        if (/logo|icon|favicon|sprite|blank|pixel/i.test(src)) return false;
+        // Optionnel : ignorer les images trop petites (si width/height dispo)
+        const w = parseInt(img.getAttribute('width') || '0', 10);
+        const h = parseInt(img.getAttribute('height') || '0', 10);
+        if ((w && w < 64) || (h && h < 64)) return false;
+        return true;
+      });
+      if (imgCandidate) imageRaw = imgCandidate.getAttribute('src') || '';
+    }
+    let image = imageRaw;
+    try {
+      if (imageRaw && !/^https?:\/\//i.test(imageRaw)) {
+        const u = new URL(url);
+        image = u.origin + (imageRaw.startsWith('/') ? imageRaw : '/' + imageRaw);
+      }
+    } catch {}
+    // Image par défaut si rien trouvé
+    if (!image) image = '/liberchat-logo.svg';
+    res.json({ title, description, image });
+  } catch (e) {
+    res.status(500).json({ error: 'Impossible de récupérer le lien' });
+  }
+});
 
 app.get('*', (req, res) => {
   res.sendFile(join(__dirname, 'dist', 'index.html'));

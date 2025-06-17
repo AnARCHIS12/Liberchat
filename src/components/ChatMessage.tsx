@@ -37,6 +37,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
   const bubbleRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [audioError, setAudioError] = React.useState(false);
+  // État pour la modale d'iframe
+  const [iframeUrl, setIframeUrl] = useState<string|null>(null);
+  const [iframeError, setIframeError] = useState(false);
+  const [iframeLoading, setIframeLoading] = useState(false);
 
   const formatTime = (timestamp: number) => {
     return new Date(timestamp).toLocaleTimeString([], { 
@@ -51,26 +55,30 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
   const LinkPreview: React.FC<{ url: string }> = ({ url }) => {
     const [meta, setMeta] = React.useState<{ title?: string; description?: string; image?: string }>({});
     React.useEffect(() => {
-      // Appel à un service d'embed tiers ou API maison à ajouter ici si besoin
-      // Pour l'instant, on ne fait qu'un fetch du titre de la page
-      fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`)
-        .then(r => r.text())
-        .then(html => {
-          const doc = new DOMParser().parseFromString(html, 'text/html');
-          setMeta({
-            title: doc.querySelector('title')?.innerText,
-            description: doc.querySelector('meta[name="description"]')?.getAttribute('content') || undefined,
-            image: doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || undefined,
-          });
-        })
+      // Utilisation du proxy local pour éviter les problèmes CORS
+      fetch(`/api/link-preview?url=${encodeURIComponent(url)}`)
+        .then(r => r.json())
+        .then(meta => setMeta(meta))
         .catch(() => {});
     }, [url]);
     return (
       <div className="border border-red-700 bg-black/80 rounded-lg p-2 mt-2 max-w-xs text-xs text-white">
-        {meta.image && <img src={meta.image} alt="aperçu" className="w-full max-h-32 object-cover rounded mb-1" />}
-        <div className="font-bold truncate">{meta.title || url}</div>
+        {/* Affiche le titre seulement s'il existe et n'est pas égal à l'URL */}
+        {meta.title && meta.title !== url && (
+          <div className="font-bold truncate">{meta.title}</div>
+        )}
         {meta.description && <div className="text-gray-300 truncate">{meta.description}</div>}
-        <a href={url} target="_blank" rel="noopener noreferrer" className="text-red-400 underline break-all">{url}</a>
+        <div className="flex gap-2 items-center mt-1">
+          <a href={url} target="_blank" rel="noopener noreferrer" className="text-red-400 underline break-all">{url}</a>
+          <button
+            className="bg-red-700 hover:bg-red-600 text-white text-[10px] px-1 py-0.5 rounded h-5 min-w-0 leading-none"
+            style={{lineHeight: '1', fontSize: '10px', padding: '1px 4px'}}
+            onClick={() => handleOpenIframe(url)}
+            title="Ouvrir dans l'application"
+          >
+            Ouvrir
+          </button>
+        </div>
       </div>
     );
   };
@@ -106,7 +114,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
           {parts.map((part, i) =>
             part.url ? (
               <React.Fragment key={i}>
-                <a href={part.url} target="_blank" rel="noopener noreferrer" className="text-red-400 underline break-all hover:text-red-200">{part.text}</a>
+                {/* Affiche seulement l'embed, pas le lien brut */}
                 <LinkPreview url={part.url} />
               </React.Fragment>
             ) : (
@@ -299,6 +307,35 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
     setShowMenu(true);
   };
 
+  // Ouvre la modale et réinitialise l'erreur à chaque clic sur "Ouvrir"
+  const handleOpenIframe = (url: string) => {
+    setIframeError(false);
+    setIframeUrl(url);
+  };
+
+  // Timeout fiable pour afficher le message d'erreur si l'iframe ne charge pas (ou est bloquée)
+  const iframeTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  React.useEffect(() => {
+    if (!iframeUrl) return;
+    setIframeError(false);
+    setIframeLoading(true);
+    if (iframeTimeoutRef.current) clearTimeout(iframeTimeoutRef.current);
+    iframeTimeoutRef.current = setTimeout(() => {
+      setIframeError(true);
+      setIframeLoading(false);
+    }, 3000); // 3 secondes pour laisser plus de temps
+    return () => {
+      if (iframeTimeoutRef.current) clearTimeout(iframeTimeoutRef.current);
+    };
+  }, [iframeUrl]);
+
+  // Fonction pour annuler l'erreur si l'iframe charge correctement
+  const handleIframeLoad = () => {
+    setIframeError(false);
+    setIframeLoading(false);
+    if (iframeTimeoutRef.current) clearTimeout(iframeTimeoutRef.current);
+  };
+
   return (
     <div
       className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}
@@ -468,6 +505,42 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
       <span className="ml-1 sm:ml-2 mt-0.5 text-[10px] sm:text-xs text-gray-400 font-mono opacity-80">
         {formatTime(message.timestamp)}
       </span>
+      {/* Modale interne flottante avec gestion d'erreur explicite pour sites non intégrables */}
+      {iframeUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <div className="bg-black rounded-lg shadow-lg w-[90vw] max-w-2xl h-[80vh] flex flex-col">
+            <div className="flex justify-between items-center p-2 border-b border-gray-700">
+              <span className="text-xs text-white truncate max-w-[70vw]">{iframeUrl}</span>
+              <button className="ml-2 text-xs bg-red-700 hover:bg-red-600 text-white rounded px-2 py-1" onClick={() => { setIframeUrl(null); setIframeError(false); }}>Fermer</button>
+            </div>
+            <iframe
+              src={iframeUrl}
+              className="flex-1 w-full h-full bg-white"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              title="Aperçu du site"
+              onLoad={handleIframeLoad}
+              style={{ display: iframeError ? 'none' : 'block' }}
+            />
+            {iframeLoading && !iframeError && (
+              <div className="flex flex-col items-center justify-center p-6 gap-4 flex-1 absolute inset-0 bg-black/80">
+                <span className="text-white text-sm text-center mb-2 animate-pulse">Chargement…</span>
+              </div>
+            )}
+            {iframeError && (
+              <div className="flex flex-col items-center justify-center p-6 gap-4 flex-1 absolute inset-0 bg-black/90">
+                <span className="text-white text-sm text-center mb-2">Aperçu non disponible pour ce site.</span>
+                <span className="italic text-red-400 text-xs text-center mb-2">Ah, c’est capitaliste, ça censure les anarchistes.</span>
+                <button
+                  className="bg-red-700 hover:bg-red-600 text-white text-sm px-4 py-2 rounded"
+                  onClick={() => { window.open(iframeUrl!, '_blank'); setIframeUrl(null); setIframeError(false); }}
+                >
+                  Aller à la page
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
