@@ -22,22 +22,10 @@ git clone https://github.com/AnARCHIS12/Liberchat-3.0.git
 cd Liberchat-3.0
 ```
 
-2. Installez les dépendances :
+2-3. Installez les dépendances :
 ```bash
 npm install
 ```
-
-3. Configurez les variables d'environnement :
-   - Créez un fichier `.env` à la racine du projet
-   - Ajoutez votre clé API Giphy :
-   ```env
-   VITE_GIPHY_API_KEY=votre_clé_api_giphy
-   ```
-   Pour obtenir une clé API Giphy :
-   - Visitez [Giphy Developers](https://developers.giphy.com/)
-   - Créez un compte développeur
-   - Créez une nouvelle application
-   - Copiez la clé API fournie
 
 4. Lancez le serveur de développement :
 ```bash
@@ -51,8 +39,8 @@ npm run dev
 1. Dans votre tableau de bord Render :
    - Créez un nouveau Web Service
    - Liez votre repository GitHub
-   - Dans l'onglet "Environment", ajoutez la variable :
-     - `VITE_GIPHY_API_KEY`: Votre clé API Giphy
+
+
 
 2. Configurez le build :
    - Build Command : `npm install && npm run build`
