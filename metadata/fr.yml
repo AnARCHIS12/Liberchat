@@ -1,0 +1,30 @@
+Categories:
+  - Internet
+  - Communication
+
+License: GPL-3.0-or-later
+
+AuthorName: AnARCHIS12
+AuthorEmail: contact@liberchat.org
+WebSite: https://github.com/AnARCHIS12/Liberchat-3.0
+
+SourceCode: https://github.com/AnARCHIS12/Liberchat-3.0
+IssueTracker: https://github.com/AnARCHIS12/Liberchat-3.0/issues
+
+Name: LiberChat
+AutoName: LiberChat
+Summary: Application de chat en temps réel avec logo anarchiste
+Description: |
+  LiberChat est une application de chat en temps réel avec une interface moderne et un logo anarchiste personnalisé.
+
+  Caractéristiques :
+  * Chat en temps réel
+  * Interface moderne avec thème sombre
+  * Sécurisé
+  * Logo anarchiste personnalisé
+  * Open source et libre
+
+  Note : Les appels vidéo ne sont pas supportés dans cette version.
+
+CurrentVersion: 1.0.0
+CurrentVersionCode: 1
