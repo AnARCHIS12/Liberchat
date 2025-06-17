@@ -26,7 +26,7 @@ app.use(
         defaultSrc: ["'self'"],
         mediaSrc: ["'self'", "data:"], // Autorise data: pour les médias
         imgSrc: ["'self'", "data:", "blob:"], // Autorise les images blob pour l'aperçu
-        scriptSrc: ["'self'"],
+        scriptSrc: ["'self'"], // Suppression de 'unsafe-inline' pour plus de sécurité
         styleSrc: ["'self'", "'unsafe-inline'"],
         connectSrc: ["'self'", "ws://localhost:3000", "wss://liberchat-3-0-1.onrender.com", "wss://liberchat.onrender.com"],
         frameSrc: ["*"] , // Autorise toutes les iframes (attention à la sécurité)
