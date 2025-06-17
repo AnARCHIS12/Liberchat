@@ -68,11 +68,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
           <div className="font-bold truncate">{meta.title}</div>
         )}
         {meta.description && <div className="text-gray-300 truncate">{meta.description}</div>}
-        <div className="flex gap-2 items-center mt-1">
-          <a href={url} target="_blank" rel="noopener noreferrer" className="text-red-400 underline break-all">{url}</a>
+        <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center mt-1 w-full">
+          <a href={url} target="_blank" rel="noopener noreferrer" className="text-red-400 underline break-all flex-1 min-w-0 text-xs sm:text-sm">{url}</a>
           <button
-            className="bg-red-700 hover:bg-red-600 text-white text-[10px] px-1 py-0.5 rounded h-5 min-w-0 leading-none"
-            style={{lineHeight: '1', fontSize: '10px', padding: '1px 4px'}}
+            className="bg-red-700 hover:bg-red-600 text-white text-[12px] px-2 py-1 rounded w-full sm:w-auto mt-1 sm:mt-0"
+            style={{lineHeight: '1', fontSize: '12px', padding: '4px 8px'}}
             onClick={() => handleOpenIframe(url)}
             title="Ouvrir dans l'application"
           >
