@@ -7,10 +7,10 @@
 
 ## 📚 Pages principales
 
-- [🛠️ Guide d'installation](Installation)
-- [📖 Guide d'utilisation](Utilisation)
-- [❓ FAQ](FAQ)
-- [🤝 Contribuer au projet](Contribution)
+- [🛠️ Guide d'installation](Installation.md)
+- [📖 Guide d'utilisation](Utilisation.md)
+- [❓ FAQ](FAQ.md)
+- [🤝 Contribuer au projet](Contribution.md)
 - [🚀 Script d’auto-hébergement (HTTPS, Tor, .onion personnalisé)](auto_hebergement.md)
 - [🗑️ Script de désinstallation automatique](auto_degrage.md)
 - [⚙️ Script de gestion de l’application](auto_gestion.md)
@@ -21,10 +21,10 @@
 
 ## 🔍 Navigation rapide
 
-- **[Installation](Installation)** — Comment installer l'application
-- **[Utilisation](Utilisation)** — Comment utiliser l'application
-- **[FAQ](FAQ)** — Questions fréquentes
-- **[Contribution](Contribution)** — Comment contribuer au projet
+- **[Installation](Installation.md)** — Comment installer l'application
+- **[Utilisation](Utilisation.md)** — Comment utiliser l'application
+- **[FAQ](FAQ.md)** — Questions fréquentes
+- **[Contribution](Contribution.md)** — Comment contribuer au projet
 - **[Auto-hébergement](auto_hebergement.md)** — Héberger facilement Liberchat (HTTPS, Tor)
 - **[Désinstallation](auto_degrage.md)** — Nettoyer et désinstaller proprement
 - **[Gestion de l’application](auto_gestion.md)** — Démarrer/arrêter/redémarrer facilement

@@ -37,11 +37,3 @@
 
 - Les appels vidéo ne sont pas supportés
 - Pas de support pour les fichiers autres qu'images et vocaux
-
-## 💡 Astuces
-
-- Cliquez sur une image envoyée pour l'afficher en grand
-- Double-cliquez sur un message pour le copier
-- Utilisez les emojis pour rendre vos messages plus expressifs
-- Rafraîchissez l'application si vous rencontrez des problèmes de connexion
-- Pour plus d'anonymat, consultez le guide "Relais d'anonymat"
