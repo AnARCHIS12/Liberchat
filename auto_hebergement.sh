@@ -153,7 +153,13 @@ EOF
     sleep 1
   done
   if [ ! -f /var/lib/tor/hidden_service/hostname ]; then
-    echo "Erreur : le fichier hostname .onion n'a pas été généré après 30s. Vérifiez les logs de Tor."
+    echo -e "${RED}Erreur : le fichier hostname .onion n'a pas été généré après 30s.${NC}"
+    echo -e "${YELLOW}Guide de dépannage :${NC}"
+    echo -e "1. Vérifiez que Tor fonctionne : sudo systemctl status tor@default || sudo systemctl status tor"
+    echo -e "2. Vérifiez la config : sudo cat /etc/tor/torrc (doit contenir HiddenServiceDir et HiddenServicePort)"
+    echo -e "3. Réparez Tor si besoin : sudo apt-get purge --auto-remove tor && sudo apt-get install tor"
+    echo -e "4. Consultez les logs : sudo journalctl -u tor@default -n 50 --no-pager || sudo journalctl -u tor -n 50 --no-pager"
+    echo -e "5. Relancez ce script après correction."
     exit 1
   fi
   ONION_ADDR=$(cat /var/lib/tor/hidden_service/hostname 2>/dev/null || echo "Non généré")
@@ -179,6 +185,68 @@ add_domain_to_env() {
       echo "[Auto] Variable ALLOWED_DOMAINS ajoutée à .env."
     fi
   fi
+}
+
+# Vérification et réparation automatique de Tor
+check_and_repair_tor() {
+  echo -e "${YELLOW}Vérification du service Tor...${NC}"
+  # Vérifie si tor@default existe (cas Debian/Ubuntu modernes)
+  if systemctl list-units --full -all | grep -q 'tor@default.service'; then
+    if ! systemctl is-active --quiet tor@default; then
+      echo -e "${RED}Le service tor@default n'est pas actif. Tentative de réparation...${NC}"
+      sudo apt-get install --reinstall -y tor
+      sudo systemctl restart tor@default
+      sleep 3
+      if ! systemctl is-active --quiet tor@default; then
+        echo -e "${RED}Échec du démarrage de tor@default. Veuillez vérifier manuellement avec 'sudo journalctl -u tor@default -n 50 --no-pager'.${NC}"
+        exit 1
+      else
+        echo -e "${GREEN}Service tor@default réparé et démarré avec succès.${NC}"
+      fi
+    else
+      echo -e "${GREEN}Service tor@default actif.${NC}"
+    fi
+  else
+    # Fallback : vérifie tor.service classique
+    if ! systemctl is-active --quiet tor; then
+      echo -e "${RED}Le service Tor n'est pas actif. Tentative de réparation...${NC}"
+      sudo apt-get install --reinstall -y tor
+      sudo systemctl restart tor
+      sleep 3
+      if ! systemctl is-active --quiet tor; then
+        echo -e "${RED}Échec du démarrage de Tor. Votre installation systemd est probablement cassée (ExecStart=/bin/true).${NC}"
+        echo -e "${RED}Corrigez manuellement avec : sudo apt-get purge --auto-remove tor && sudo apt-get install tor${NC}"
+        exit 1
+      else
+        echo -e "${GREEN}Service Tor réparé et démarré avec succès.${NC}"
+      fi
+    else
+      echo -e "${GREEN}Service Tor actif.${NC}"
+    fi
+  fi
+}
+
+# Correction définitive Tor : configuration stricte et service explicite
+force_tor_service() {
+  # Vérifie et installe tor@default si besoin
+  if ! systemctl list-units --full -all | grep -q 'tor@default.service'; then
+    echo -e "${YELLOW}Installation du vrai service Tor (tor@default)...${NC}"
+    sudo apt-get purge --auto-remove -y tor
+    sudo apt-get install -y tor
+    sudo systemctl enable tor@default
+  fi
+  # Ajout/correction stricte de la config HiddenService
+  sudo sed -i '/HiddenServiceDir \/var\/lib\/tor\/hidden_service\//d' /etc/tor/torrc
+  sudo sed -i '/HiddenServicePort 80 127.0.0.1:/d' /etc/tor/torrc
+  echo "HiddenServiceDir /var/lib/tor/hidden_service/" | sudo tee -a /etc/tor/torrc
+  echo "HiddenServicePort 80 127.0.0.1:$app_port" | sudo tee -a /etc/tor/torrc
+  # Supprime et recrée le dossier avec les bonnes permissions
+  sudo systemctl stop tor@default
+  sudo rm -rf /var/lib/tor/hidden_service/
+  sudo mkdir -p /var/lib/tor/hidden_service/
+  sudo chown -R debian-tor:debian-tor /var/lib/tor/hidden_service/
+  sudo chmod 700 /var/lib/tor/hidden_service/
+  sudo systemctl start tor@default
 }
 
 # Couleurs et style
@@ -229,6 +297,8 @@ if [[ "$CHOICE" == "1" || "$CHOICE" == "2" ]]; then
     exit 1
   fi
 elif [ "$CHOICE" == "3" ]; then
+  force_tor_service
+  check_and_repair_tor
   auto_tor
   ONION_ADDR=$(cat /var/lib/tor/hidden_service/hostname 2>/dev/null || echo "")
   if [ -n "$ONION_ADDR" ]; then
@@ -237,6 +307,8 @@ elif [ "$CHOICE" == "3" ]; then
     echo -e "\033[1;33mOuvrez cette adresse dans Tor Browser pour accéder à votre chat en union !\033[0m\n"
   fi
 elif [ "$CHOICE" == "4" ]; then
+  force_tor_service
+  check_and_repair_tor
   custom_tor
   ONION_ADDR=$(cat /var/lib/tor/hidden_service/hostname 2>/dev/null || echo "")
   if [ -n "$ONION_ADDR" ]; then
