@@ -148,13 +148,13 @@ ipcMain.handle('detect-backend', async () => {
     });
     if (isOpen) return `Backend détecté sur le port ${port}`;
   }
-  // Si aucun backend détecté, tenter de lancer app.js si présent
-  const appPath = path.join(process.cwd(), '../app.js');
-  if (fs.existsSync(appPath)) {
-    exec(`node "${appPath}" &`, (err) => {});
-    return 'Backend Liberchat lancé sur le port 3000 (par défaut).';
+  // Si aucun backend détecté, tenter de lancer server.js si présent
+  const serverPath = path.join(process.cwd(), '../server.js');
+  if (fs.existsSync(serverPath)) {
+    exec(`node "${serverPath}" &`, (err) => {});
+    return 'Backend Liberchat lancé sur le port 3000 (par défaut, via server.js).';
   }
-  return 'Aucun backend détecté ni app.js trouvé.';
+  return 'Aucun backend détecté ni server.js trouvé.';
 });
 
 // Gestion globale des promesses non gérées

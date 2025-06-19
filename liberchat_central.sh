@@ -32,8 +32,9 @@ menu() {
   echo -e "${GREEN} 3) 🗑️  Désinstaller/Nettoyer${NC}"
   echo -e "${GREEN} 4) ❌ Quitter${NC}"
   echo -e "${GREEN} 5) 🚀 Tout configurer, builder et lancer automatiquement${NC}"
+  echo -e "${GREEN} 6) 🛠️  Menu autogestion avancée${NC}"
   echo -e "${BLUE}╚══════════════════════════════════════════════╝${NC}"
-  read -p "${YELLOW}Choisissez une option [1-5] : ${NC}" CHOICE
+  read -p "${YELLOW}Choisissez une option [1-6] : ${NC}" CHOICE
 }
 
 run_script() {

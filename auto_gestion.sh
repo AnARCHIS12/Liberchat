@@ -26,11 +26,12 @@ menu() {
   echo -e "${GREEN}1) Démarrer l'application (npm start)${NC}"
   echo -e "${RED}2) Arrêter l'application${NC}"
   echo -e "${YELLOW}3) Redémarrer l'application${NC}"
-  echo -e "${CYAN}4) Voir les logs${NC}"
-  echo -e "${YELLOW}5) Rebuild (npm run build)${NC}"
-  echo -e "${CYAN}6) Ouvrir une adresse .onion dans Tor Browser${NC}"
-  echo -e "${RED}7) Quitter${NC}"
-  read -p "${BOLD}Choisissez une option [1-7] : ${NC}" CHOICE
+  echo -e "${CYAN}4) Voir le statut de l'application${NC}"
+  echo -e "${CYAN}5) Voir les logs${NC}"
+  echo -e "${YELLOW}6) Rebuild (npm run build)${NC}"
+  echo -e "${CYAN}7) Ouvrir une adresse .onion dans Tor Browser${NC}"
+  echo -e "${RED}8) Quitter${NC}"
+  read -p "${BOLD}Choisissez une option [1-8] : ${NC}" CHOICE
 }
 
 start_app() {
@@ -89,16 +90,29 @@ open_onion_in_tor() {
   fi
 }
 
+status_app() {
+  if [ -f "$PID_FILE" ] && ps -p $(cat "$PID_FILE") > /dev/null 2>&1; then
+    echo -e "${GREEN}L'application est en cours d'exécution (PID $(cat $PID_FILE)).${NC}"
+    PORT=$(grep -oE ':[0-9]+' "$LOG_FILE" | head -n1 | tr -d ':')
+    if [ ! -z "$PORT" ]; then
+      echo -e "${CYAN}Port détecté dans les logs : $PORT${NC}"
+    fi
+  else
+    echo -e "${RED}L'application n'est pas en cours d'exécution.${NC}"
+  fi
+}
+
 while true; do
   menu
   case $CHOICE in
     1) start_app; read -p "Appuyez sur Entrée pour continuer...";;
     2) stop_app; read -p "Appuyez sur Entrée pour continuer...";;
     3) restart_app; read -p "Appuyez sur Entrée pour continuer...";;
-    4) logs_app; read -p "Appuyez sur Entrée pour continuer...";;
-    5) rebuild_app; read -p "Appuyez sur Entrée pour continuer...";;
-    6) read -p "Entrez l'adresse .onion à ouvrir : " ONION_URL; open_onion_in_tor "$ONION_URL"; read -p "Appuyez sur Entrée pour continuer...";;
-    7) echo -e "${GREEN}Sortie. Vive la Commune numérique !${NC}"; exit 0;;
+    4) status_app; read -p "Appuyez sur Entrée pour continuer...";;
+    5) logs_app; read -p "Appuyez sur Entrée pour continuer...";;
+    6) rebuild_app; read -p "Appuyez sur Entrée pour continuer...";;
+    7) read -p "Entrez l'adresse .onion à ouvrir : " ONION_URL; open_onion_in_tor "$ONION_URL"; read -p "Appuyez sur Entrée pour continuer...";;
+    8) echo -e "${GREEN}Sortie. Vive la Commune numérique !${NC}"; exit 0;;
     *) echo -e "${RED}Option invalide."; sleep 1;;
   esac
 
