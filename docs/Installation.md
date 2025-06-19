@@ -40,8 +40,7 @@ npm run dev
 1. Dans votre tableau de bord Render :
    - Créez un nouveau Web Service
    - Liez votre repository GitHub
-   - Dans l'onglet "Environment", ajoutez la variable :
-     - `VITE_GIPHY_API_KEY`: Votre clé API Giphy
+
 
 2. Configurez le build :
    - Build Command : `npm install && npm run build`
