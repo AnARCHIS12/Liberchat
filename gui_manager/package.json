@@ -1,0 +1,49 @@
+{
+  "name": "liberchat-gui-manager",
+  "version": "0.1.0",
+  "description": "Gestionnaire graphique pour Liberchat (hébergement, gestion, désinstallation)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "build": {
+    "appId": "org.liberchat.gui",
+    "productName": "Liberchat GUI Manager",
+    "files": [
+      "main.js",
+      "index.html",
+      "liberchat-logo.svg",
+      "liberchat-logo-256.svg",
+      "liberchat.ico",
+      "liberchat-512.png"
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility",
+      "icon": "liberchat-512.png",
+      "maintainer": "Votre Nom <votre@email.fr>"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "publisherName": "Liberchat",
+      "icon": "liberchat.ico"
+    }
+  },
+  "dependencies": {
+    "sudo-prompt": "^9.2.1"
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^24.6.0"
+  },
+  "author": {
+    "name": "Votre Nom",
+    "email": "votre@email.fr"
+  },
+  "homepage": "https://liberchat.org/"
+}
