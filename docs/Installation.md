@@ -18,8 +18,8 @@
 
 1. Clonez le repository :
 ```bash
-git clone https://github.com/AnARCHIS12/Liberchat-3.0.git
-cd Liberchat-3.0
+git clone https://github.com/AnARCHIS12/Liberchat.git
+cd Liberchat
 ```
 
 2-3. Installez les dépendances :
