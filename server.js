@@ -315,6 +315,20 @@ io.on('connection', (socket) => {
     io.emit('react message', { messageId, reactions: [...msg.reactions] });
   });
 
+  // Indicateur "en train d'écrire"
+  socket.on('typing', () => {
+    const user = users.get(socket.id);
+    if (user) {
+      socket.broadcast.emit('typing', user.username);
+    }
+  });
+  socket.on('stop typing', () => {
+    const user = users.get(socket.id);
+    if (user) {
+      socket.broadcast.emit('stop typing', user.username);
+    }
+  });
+
   socket.on('userJoined', (username) => {
     const systemMessage = {
       id: nextMessageId++,

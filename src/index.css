@@ -125,3 +125,28 @@ body.theme-light {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-500;
 }
+
+/* Style anarchiste pour le menu emojis */
+.anarchist-emoji-picker {
+  font-family: 'Fira Mono', monospace;
+  border-style: dashed;
+  box-shadow: 0 0 16px 4px #b91c1c;
+}
+.anarchist-emoji-inner .epr-emoji-category-label {
+  color: #b91c1c !important;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+.anarchist-emoji-inner .epr-emoji {
+  filter: grayscale(0.2) contrast(1.2);
+}
+.anarchist-emoji-inner .epr-search {
+  background: #1a1a1a;
+  color: #b91c1c;
+  border: 1px dashed #b91c1c;
+}
+.anarchist-emoji-inner .epr-preview {
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+}

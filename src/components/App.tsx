@@ -45,6 +45,7 @@ function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(
     window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   );
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -555,6 +556,25 @@ function App() {
     document.body.classList.add(theme === 'dark' ? 'theme-dark' : 'theme-light');
   }, [theme]);
 
+  useEffect(() => {
+    if (!socket) return;
+    // Gestion de l'indicateur "en train d'écrire"
+    const handleTyping = (user: string) => {
+      console.log('[TYPING] reçu:', user);
+      setTypingUsers(prev => prev.includes(user) ? prev : [...prev, user]);
+    };
+    const handleStopTyping = (user: string) => {
+      console.log('[STOP TYPING] reçu:', user);
+      setTypingUsers(prev => prev.filter(u => u !== user));
+    };
+    socket.on('typing', handleTyping);
+    socket.on('stop typing', handleStopTyping);
+    return () => {
+      socket.off('typing', handleTyping);
+      socket.off('stop typing', handleStopTyping);
+    };
+  }, [socket]);
+
   if (keyPrompt) {
     return (
       <div className="relative min-h-screen bg-gradient-to-br from-black via-red-950 to-black text-white font-sans flex flex-col">
@@ -651,6 +671,19 @@ function App() {
                 encryptMessageFallback={encryptMessageFallback}
               />
             ))}
+            {/* Indicateur de saisie façon bulle Facebook */}
+            {typingUsers.length > 0 && (
+              <div className="flex items-center mb-2">
+                <div className="flex items-center bg-red-700/90 text-white rounded-full px-4 py-2 shadow-lg animate-pulse">
+                  <span className="mr-2">⚑</span>
+                  <span className="font-mono">
+                    {typingUsers.length === 1
+                      ? `${typingUsers[0]} prépare une insurrection...`
+                      : `${typingUsers.join(', ')} préparent une insurrection...`}
+                  </span>
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </main>
           <div className="flex-shrink-0 sticky bottom-0 z-10 bg-black/95 border-t-2 border-red-700">
@@ -663,6 +696,7 @@ function App() {
               currentUser={username}
               replyTo={replyTo}
               onReplyHandled={() => setReplyTo(null)}
+              socket={socket} // Ajout du socket en prop
             />
           </div>
         </div>

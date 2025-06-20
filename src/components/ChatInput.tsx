@@ -25,13 +25,14 @@ interface ChatInputProps {
   currentUser: string;
   replyTo?: Message | null;
   onReplyHandled?: () => void;
+  socket?: any; // Ajout du socket en prop
 }
 
 interface EmojiData {
   native: string;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSendAudio, isConnected, users, currentUser, replyTo, onReplyHandled }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSendAudio, isConnected, users, currentUser, replyTo, onReplyHandled, socket }) => {
   const [message, setMessage] = useState<string>('');
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
   const [recording, setRecording] = useState(false);
@@ -43,6 +44,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const filteredUsers = users.filter(u =>
     mentionQuery && u.username.toLowerCase().includes(mentionQuery.toLowerCase()) && u.username !== currentUser
@@ -279,6 +281,17 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
     }
   }, [isMobile]);
 
+  // Gestion de l'indicateur "en train d'écrire"
+  const handleTyping = () => {
+    if (typingTimeout.current) clearTimeout(typingTimeout.current);
+    if (message.trim() && socket) {
+      socket.emit('typing');
+      typingTimeout.current = setTimeout(() => {
+        socket.emit('stop typing');
+      }, 2000);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="sticky bottom-0 flex flex-wrap items-end gap-2 bg-black border-t-4 border-red-700 p-2 sm:p-4 relative">
       {/* Affichage du message cité façon messagerie moderne */}
@@ -367,7 +380,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
           value={message}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onKeyPress={(e: React.KeyboardEvent) => e.key === 'Enter' && !e.shiftKey && handleSubmit()}
+          onKeyPress={(e: React.KeyboardEvent) => { handleTyping(); if (e.key === 'Enter' && !e.shiftKey) handleSubmit(); }}
           className="w-full px-3 py-2 bg-black border-2 border-red-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 text-white placeholder-gray-400 text-sm sm:text-base font-mono shadow"
           style={{ fontSize: '16px' }}
           placeholder={isConnected ? "Écrivez un message révolutionnaire..." : "Connexion au serveur..."}
@@ -377,13 +390,24 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
         />
 
         {showEmoji && (
-          <div className="absolute bottom-full left-0 mb-2 z-50">
+          <div
+            className="absolute z-50 border-4 border-red-700 rounded-2xl shadow-2xl bg-black/95 p-2 anarchist-emoji-picker"
+            style={{
+              left: 0,
+              bottom: '110%',
+              maxWidth: '100vw',
+              minWidth: 260,
+              right: 'auto',
+            }}
+          >
+            <div className="text-center text-red-500 font-mono font-bold mb-2 text-lg tracking-widest">⚑ EMOJIS LIBRES</div>
             <Picker 
               data={data} 
               onEmojiSelect={handleEmojiSelect}
               theme="dark"
               previewPosition="none"
               skinTonePosition="none"
+              className="anarchist-emoji-inner"
             />
           </div>
         )}
@@ -415,3 +439,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
 };
 
 export default ChatInput;
+
+/* Ajout de styles anarchistes pour le picker d'emojis */
+// Dans le même fichier ou dans le CSS global :
+// .anarchist-emoji-picker { font-family: 'Fira Mono', monospace; border-style: dashed; box-shadow: 0 0 16px 4px #b91c1c; }
+// .anarchist-emoji-inner .epr-emoji-category-label { color: #b91c1c !important; font-weight: bold; letter-spacing: 2px; }
+// .anarchist-emoji-inner .epr-emoji { filter: grayscale(0.2) contrast(1.2); }
+// .anarchist-emoji-inner .epr-search { background: #1a1a1a; color: #b91c1c; border: 1px dashed #b91c1c; }
+// .anarchist-emoji-inner .epr-preview { background: #1a1a1a; color: #fff; border: none; }

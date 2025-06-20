@@ -494,8 +494,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
                   ✖️ Annuler
                 </button>
                 {showEmojiPicker && (
-                  <div className="absolute left-0 z-50 mt-2">
-                    <Picker data={data} onEmojiSelect={(e: any) => { handleReact(e.native); setShowEmojiPicker(false); }} theme="dark" />
+                  <div className="absolute left-0 z-50 mt-2 border-4 border-red-700 rounded-2xl shadow-2xl bg-black/95 p-2 anarchist-emoji-picker"
+                    style={{ minWidth: 260, maxWidth: '100vw' }}
+                  >
+                    <div className="text-center text-red-500 font-mono font-bold mb-2 text-lg tracking-widest">⚑ EMOJIS LIBRES</div>
+                    <Picker data={data} onEmojiSelect={(e: any) => { handleReact(e.native); setShowEmojiPicker(false); }} theme="dark" className="anarchist-emoji-inner" />
                   </div>
                 )}
               </div>
@@ -548,8 +551,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isOwnMessage, onDele
                   ✖️ Annuler
                 </button>
                 {showEmojiPicker && (
-                  <div className="absolute left-0 z-50 mt-2">
-                    <Picker data={data} onEmojiSelect={(e: any) => { handleReact(e.native); setShowEmojiPicker(false); }} theme="dark" />
+                  <div className="absolute left-0 z-50 mt-2 border-4 border-red-700 rounded-2xl shadow-2xl bg-black/95 p-2 anarchist-emoji-picker"
+                    style={{ minWidth: 260, maxWidth: '100vw' }}
+                  >
+                    <div className="text-center text-red-500 font-mono font-bold mb-2 text-lg tracking-widest">⚑ EMOJIS LIBRES</div>
+                    <Picker data={data} onEmojiSelect={(e: any) => { handleReact(e.native); setShowEmojiPicker(false); }} theme="dark" className="anarchist-emoji-inner" />
                   </div>
                 )}
               </div>
