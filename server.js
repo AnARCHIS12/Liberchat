@@ -23,7 +23,7 @@ const allowedDomains = (process.env.ALLOWED_DOMAINS || '').split(',').map(d => d
 const defaultCsp = {
   defaultSrc: ["'self'"],
   mediaSrc: ["'self'", "data:"],
-  imgSrc: ["'self'", "data:", "blob:"],
+  imgSrc: ["'self'", "data:", "blob:", "https://cdn.jsdelivr.net", "https://unpkg.com", "https://emoji-cdn.jsdelivr.net", "https://cdn.jsdelivr.net/npm/emoji-picker-react@*"],
   scriptSrc: ["'self'"],
   styleSrc: ["'self'", "'unsafe-inline'"],
   connectSrc: ["'self'", "ws://localhost:3000", "wss://liberchat-3-0-1.onrender.com", "wss://liberchat.onrender.com"],
