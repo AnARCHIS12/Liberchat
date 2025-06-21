@@ -47,6 +47,3 @@ const Header: React.FC<HeaderProps & { theme?: 'light' | 'dark', onToggleTheme?:
 };
 
 export default Header;
-
-
-export default Header;
