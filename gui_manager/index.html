@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Liberchat – Outils décentralisés</title>
+  <link rel="icon" type="image/svg+xml" href="liberchat-logo.svg">
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #181818; color: #fff; margin: 0; }
+    .container { max-width: 480px; margin: 40px auto; background: #232323; border-radius: 12px; box-shadow: 0 0 16px #0008; padding: 32px; }
+    .logo { display: flex; justify-content: center; margin-bottom: 12px; }
+    h1 { text-align: center; margin-bottom: 8px; letter-spacing: 2px; }
+    .subtitle { text-align: center; color: #ff2800; margin-bottom: 24px; }
+    label { display: block; margin: 12px 0 4px 0; }
+    input, select { width: 100%; padding: 8px; border-radius: 5px; border: none; margin-bottom: 10px; font-size: 1em; }
+    button { width: 100%; margin: 12px 0; padding: 14px; font-size: 1.1em; border: none; border-radius: 6px; background: #ff2800; color: #fff; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #c41e00; }
+    .footer { text-align: center; margin-top: 32px; color: #aaa; font-size: 0.95em; }
+    .icon { font-size: 1.3em; margin-right: 8px; }
+    #message { background: #222; color: #ffb700; border-radius: 6px; padding: 12px; margin: 18px 0 0 0; min-height: 24px; text-align: center; font-size: 1.08em; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="liberchat-logo.svg" alt="Liberchat logo" width="80" height="80" />
+    </div>
+    <h1>LIBERCHAT</h1>
+    <div class="subtitle">Ⓐ Outils décentralisés Ⓐ</div>
+    <form id="form-install">
+      <label for="server">Serveur web :</label>
+      <select id="server">
+        <option value="nginx">Nginx</option>
+        <option value="apache">Apache</option>
+      </select>
+      <label for="domain">Domaine ou sous-domaine :</label>
+      <input id="domain" type="text" placeholder="ex: monsite.fr ou sub.monsite.fr" required />
+      <label for="port">Port de l’application :</label>
+      <input id="port" type="number" min="1" max="65535" value="3000" required />
+      <label for="tor">Service Tor :</label>
+      <select id="tor">
+        <option value="non">Non</option>
+        <option value="oui">Oui (.onion)</option>
+      </select>
+      <label for="onionprefix">Préfixe .onion (optionnel) :</label>
+      <input id="onionprefix" type="text" placeholder="ex: Liberchat" />
+      <button type="submit"><span class="icon">🚀</span>Héberger/Installer</button>
+    </form>
+    <button id="btn-manage"><span class="icon">⚙️</span>Gérer l’application</button>
+    <button id="btn-uninstall"><span class="icon">🗑️</span>Désinstaller/Nettoyer</button>
+    <button id="btn-detect"><span class="icon">🔎</span>Détecter/Relancer le backend Liberchat</button>
+    <button onclick="window.close()"><span class="icon">❌</span>Quitter</button>
+    <div id="message"></div>
+    <div class="footer">🌐 Pour la décentralisation numérique – v0.1.0</div>
+  </div>
+  <script>
+    const { ipcRenderer } = require('electron');
+    function showMsg(msg) {
+      document.getElementById('message').textContent = msg;
+    }
+    document.getElementById('form-install').onsubmit = async (e) => {
+      e.preventDefault();
+      showMsg('Installation en cours...');
+      const server = document.getElementById('server').value;
+      const domain = document.getElementById('domain').value;
+      const port = document.getElementById('port').value;
+      const tor = document.getElementById('tor').value;
+      const onionprefix = document.getElementById('onionprefix').value;
+      const result = await ipcRenderer.invoke('install-app', { server, domain, port, tor, onionprefix });
+      showMsg(result);
+    };
+    document.getElementById('btn-manage').onclick = async () => {
+      showMsg('Récupération du statut et des logs...');
+      const result = await ipcRenderer.invoke('manage-app');
+      showMsg(result);
+    };
+    document.getElementById('btn-uninstall').onclick = async () => {
+      if (!confirm('Êtes-vous sûr de vouloir tout désinstaller ?')) return;
+      showMsg('Désinstallation complète en cours...');
+      const result = await ipcRenderer.invoke('uninstall-app');
+      showMsg(result);
+    };
+    document.getElementById('btn-detect').onclick = async () => {
+      showMsg('Détection du backend en cours...');
+      const result = await ipcRenderer.invoke('detect-backend');
+      showMsg(result);
+    };
+    // Gestion des erreurs envoyées par le main process
+    ipcRenderer.on('error-message', (event, msg) => {
+      showMsg('Erreur : ' + msg);
+    });
+  </script>
+</body>
+</html>

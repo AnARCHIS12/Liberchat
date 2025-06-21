@@ -1,0 +1,44 @@
+{
+  "name": "liberchat",
+  "version": "1.0.0",
+  "description": "Liberchat",
+  "author": {
+    "name": "LIBERCHAT",
+    "email": "contact@unionlibertaireanarchiste.org"  
+  },
+  "homepage": "https://anarchis12.github.io/Liberchat-3.0/",  
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "publish": "electron-builder --publish always"
+  },
+  "devDependencies": {
+    "electron": "^34.0.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.liberchat.app",
+    "productName": "Liberchat",
+    "win": {
+      "target": ["nsis"],
+      "icon": "electron/assets/icon.ico"
+    },
+    "linux": {
+      "target": ["deb"],
+      "icon": "electron/assets/icon.png",
+      "maintainer": "contact@unionlibertaireanarchiste.org"  
+    },
+    "mac": {
+      "icon": "electron/assets/icon.icns",
+      "target": ["dmg"]
+    },
+    "files": [
+      "electron/**/*",
+      "dist/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    }
+  }
+}
