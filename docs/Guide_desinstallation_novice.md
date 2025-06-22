@@ -19,7 +19,7 @@ sudo ./auto_degrage.sh
 - Si tu veux tout effacer, tape :
 ```bash
 cd ..
-rm -rf Liberchat-Liberchat-6.1.11
+rm -rf Liberchat-Liberchat-6.1.16
 ```
 
 ---
