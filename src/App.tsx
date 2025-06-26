@@ -69,7 +69,23 @@ function App() {
   }
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3000');
+    // Connexion Socket.IO dynamique : IP locale, .onion, ou domaine, jamais localhost en prod
+    let socketUrl = '';
+    if (import.meta.env.DEV) {
+      socketUrl = 'http://localhost:3000';
+    } else {
+      // Prend l’origine réelle de la page (IP locale, .onion, domaine, etc.)
+      let port = window.location.port;
+      const portPart = port ? `:${port}` : '';
+      socketUrl = `${window.location.protocol}//${window.location.hostname}${portPart}`;
+      // Si on est sur .onion, window.location.hostname le gère
+      // Si on est sur IP locale, idem
+      // Si on est sur un domaine, idem
+      // Jamais localhost en prod
+    }
+    const newSocket = io(socketUrl, {
+      transports: ['websocket', 'polling']
+    });
     setSocket(newSocket);
 
     newSocket.on('connect', () => {

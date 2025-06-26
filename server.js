@@ -20,20 +20,36 @@ const app = express();
 
 // Helmet pour sécuriser les headers HTTP
 const allowedDomains = (process.env.ALLOWED_DOMAINS || '').split(',').map(d => d.trim()).filter(Boolean);
+const onionDomains = allowedDomains.filter(d => d.includes('.onion'));
+const localDomains = allowedDomains.filter(d => /^(http:\/\/)?(\d+\.\d+\.\d+\.\d+)(:\d+)?$/.test(d));
 const defaultCsp = {
   defaultSrc: ["'self'"],
   mediaSrc: ["'self'", "data:"],
   imgSrc: ["'self'", "data:", "blob:", "https://cdn.jsdelivr.net", "https://unpkg.com", "https://emoji-cdn.jsdelivr.net", "https://cdn.jsdelivr.net/npm/emoji-picker-react@*"],
-  scriptSrc: ["'self'"],
+  scriptSrc: ["'self'", "'unsafe-eval'"],
   styleSrc: ["'self'", "'unsafe-inline'"],
   connectSrc: ["'self'", "ws://localhost:3000", "wss://liberchat-3-0-1.onrender.com", "wss://liberchat.onrender.com"],
   frameSrc: ["*"]
 };
+defaultCsp.workerSrc = ["'self'"];
 if (allowedDomains.length > 0) {
-  // Ajoute les domaines personnalisés à connectSrc et autres si besoin
   defaultCsp.connectSrc = defaultCsp.connectSrc.concat(allowedDomains);
   defaultCsp.imgSrc = defaultCsp.imgSrc.concat(allowedDomains);
   defaultCsp.frameSrc = defaultCsp.frameSrc.concat(allowedDomains);
+  defaultCsp.workerSrc = defaultCsp.workerSrc.concat(allowedDomains);
+}
+// Ajout automatique des .onion et IP locales pour union
+if (onionDomains.length > 0) {
+  defaultCsp.connectSrc = defaultCsp.connectSrc.concat(onionDomains);
+  defaultCsp.imgSrc = defaultCsp.imgSrc.concat(onionDomains);
+  defaultCsp.frameSrc = defaultCsp.frameSrc.concat(onionDomains);
+  defaultCsp.workerSrc = defaultCsp.workerSrc.concat(onionDomains);
+}
+if (localDomains.length > 0) {
+  defaultCsp.connectSrc = defaultCsp.connectSrc.concat(localDomains);
+  defaultCsp.imgSrc = defaultCsp.imgSrc.concat(localDomains);
+  defaultCsp.frameSrc = defaultCsp.frameSrc.concat(localDomains);
+  defaultCsp.workerSrc = defaultCsp.workerSrc.concat(localDomains);
 }
 app.use(
   helmet({
@@ -47,7 +63,7 @@ app.use(
 const limiter = rateLimit({ windowMs: 1 * 60 * 1000, max: 100 });
 app.use(limiter);
 
-// CORS : mettre l'URL de ton frontend à la place
+// CORS : autorise tous les domaines déclarés, .onion, IP locales, union
 app.use(cors({
   origin: [
     'https://liberchat-3-0-1.onrender.com',
@@ -56,7 +72,9 @@ app.use(cors({
     'https://liberchat.onrender.com',
     'capacitor://localhost',
     'http://localhost',
-    ...allowedDomains
+    ...allowedDomains,
+    ...onionDomains,
+    ...localDomains
   ],
   methods: ['GET', 'POST'],
   credentials: true
@@ -72,7 +90,10 @@ const io = new Server(server, {
       'http://localhost:3000',
       'https://liberchat.onrender.com',
       'capacitor://localhost',
-      'http://localhost'
+      'http://localhost',
+      ...allowedDomains,
+      ...onionDomains,
+      ...localDomains
     ],
     methods: ["GET", "POST"],
     credentials: true

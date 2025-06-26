@@ -49,14 +49,15 @@ function App() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Utilisation d'une URL dynamique pour le socket selon l'environnement
+    // Connexion Socket.IO dynamique selon l’environnement
     let socketUrl = '';
     if (import.meta.env.DEV) {
-      socketUrl = 'http://localhost:3000'; // Correction ici : toujours localhost:3000 en dev
-    } else if (window.location.hostname.endsWith('onrender.com')) {
-      socketUrl = `https://${window.location.hostname}`;
-    } else {
       socketUrl = 'http://localhost:3000';
+    } else {
+      // Utilise l’origine de la page (supporte HTTPS, Tor, reverse proxy, etc.)
+      let port = window.location.port;
+      const portPart = port ? `:${port}` : '';
+      socketUrl = `${window.location.protocol}//${window.location.hostname}${portPart}`;
     }
     const newSocket = io(socketUrl, {
       transports: ['websocket', 'polling']
