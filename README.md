@@ -149,6 +149,22 @@ Pour activer le mode light :
 - Amélioration CSS pour garantir la compatibilité mobile et l’accessibilité du champ de saisie.
 - README mis à jour pour refléter ces changements.
 
+## 🆕 Nouveautés de la version 6.1.18
+
+- Indicateur « en train d’écrire » amélioré : affichage dynamique au-dessus de la zone de saisie, visible en temps réel pour tous les utilisateurs.
+- Prévisualisation audio avant envoi : possibilité d’écouter, d’envoyer ou d’annuler un message vocal avant qu’il ne soit transmis.
+- Correction des erreurs de typage TypeScript liées à Socket.IO côté client (meilleure compatibilité et stabilité du chat).
+- Documentation de la gestion des branches git : conseils pour créer, basculer et pousser correctement les branches de développement.
+- Amélioration de la robustesse de la connexion WebSocket/Socket.IO côté client (meilleure gestion des ports et de l’URL de connexion).
+
+## 🆕 Corrections et changements récents (6.1.18)
+
+- Ajout de la prévisualisation audio dans la zone de saisie : l’utilisateur peut écouter son message vocal avant de l’envoyer ou de l’annuler.
+- Affichage de l’indicateur « en train d’écrire » au-dessus de la zone de saisie, visible par tous les participants.
+- Correction temporaire du typage du socket côté client pour éviter les erreurs TypeScript bloquantes.
+- Conseils et corrections sur la gestion des branches git (création, push, résolution d’erreurs de référence).
+- Correction de la configuration de l’URL Socket.IO côté client pour garantir la connexion au bon serveur backend.
+
 ## 🗑️✏️ Fonctionnalités de gestion des messages
 
 - **Modification** : Seuls les messages texte peuvent être modifiés après envoi.
