@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { Socket } from 'socket.io-client';
 
 interface Message {
-  type: 'user' | 'system';
+  type: 'user' | 'system' | 'audio';
   from?: string;
   content: string;
   timestamp: string;
+  fileData?: string; // Ajout de fileData pour les messages audio
 }
 
 interface ChatProps {
-  socket: Socket;
+  socket: any; // Typage temporaire pour éviter l'erreur TS
   username: string;
 }
 
@@ -17,6 +17,7 @@ export const Chat = ({ socket, username }: ChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isConnected, setIsConnected] = useState(false);
+  const [typingUser, setTypingUser] = useState<string | null>(null); // Ajout de l'état pour le typing
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,11 +46,21 @@ export const Chat = ({ socket, username }: ChatProps) => {
       setMessages(data.messages);
     };
 
+    // Gestion du typing
+    const handleTyping = (user: string) => {
+      if (user !== username) setTypingUser(user);
+    };
+    const handleStopTyping = (user: string) => {
+      if (user === typingUser) setTypingUser(null);
+    };
+
     // Abonnement aux événements
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
     socket.on('chat message', handleChatMessage);
     socket.on('init', handleInit);
+    socket.on('typing', handleTyping);
+    socket.on('stop typing', handleStopTyping);
 
     // Nettoyage des abonnements
     return () => {
@@ -57,8 +68,10 @@ export const Chat = ({ socket, username }: ChatProps) => {
       socket.off('disconnect', handleDisconnect);
       socket.off('chat message', handleChatMessage);
       socket.off('init', handleInit);
+      socket.off('typing', handleTyping);
+      socket.off('stop typing', handleStopTyping);
     };
-  }, [socket]);
+  }, [socket, username, typingUser]);
 
   // Défilement automatique
   useEffect(() => {
@@ -100,7 +113,18 @@ export const Chat = ({ socket, username }: ChatProps) => {
               {msg.type === 'user' && msg.from !== username && (
                 <div className="text-xs text-gray-600 mb-1">{msg.from}</div>
               )}
-              <div>{msg.content}</div>
+              {/* Affichage du contenu du message */}
+              {msg.type === 'audio' && msg.fileData ? (
+                <audio
+                  controls
+                  src={msg.fileData}
+                  className="w-full mt-1 rounded-lg border-2 border-red-700 bg-black shadow"
+                  style={{ minWidth: 180, maxWidth: 320 }}
+                  controlsList="nodownload noplaybackrate"
+                />
+              ) : (
+                <div>{msg.content}</div>
+              )}
               <div className="text-xs text-right mt-1 opacity-75">
                 {new Date(msg.timestamp).toLocaleTimeString()}
               </div>
@@ -109,7 +133,12 @@ export const Chat = ({ socket, username }: ChatProps) => {
         ))}
         <div ref={messagesEndRef} />
       </div>
-
+      {/* Indicateur typing au-dessus de la zone de saisie */}
+      {typingUser && (
+        <div className="px-4 pb-1 text-sm text-gray-500 animate-pulse">
+          {typingUser} est en train d'écrire...
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="p-4 border-t">
         <div className="flex space-x-4">
           <input

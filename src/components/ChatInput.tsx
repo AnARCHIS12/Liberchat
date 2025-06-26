@@ -41,6 +41,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
   const [mentionIndex, setMentionIndex] = useState<number>(0);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [audioPreview, setAudioPreview] = useState<string | null>(null);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -173,12 +175,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
     mediaRecorderRef.current.onstop = async () => {
       const blob = new Blob(audioChunks.current, { type: mimeType || 'audio/webm' });
       console.log('[Vocal] Type MIME:', blob.type, '| Taille:', blob.size, '| Android:', isAndroid);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        onSendAudio(base64);
-      };
-      reader.readAsDataURL(blob);
+      setAudioBlob(blob);
+      setAudioPreview(URL.createObjectURL(blob));
     };
     mediaRecorderRef.current.start();
     setRecording(true);
@@ -292,6 +290,25 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
     }
   };
 
+  const handleSendAudioPreview = () => {
+    if (audioBlob) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        onSendAudio(base64);
+        if (audioPreview) URL.revokeObjectURL(audioPreview);
+        setAudioPreview(null);
+        setAudioBlob(null);
+      };
+      reader.readAsDataURL(audioBlob);
+    }
+  };
+  const handleCancelAudio = () => {
+    if (audioPreview) URL.revokeObjectURL(audioPreview);
+    setAudioPreview(null);
+    setAudioBlob(null);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="sticky bottom-0 left-0 w-full max-w-full min-h-[56px] flex flex-wrap items-end gap-2 bg-black border-t-4 border-red-700 p-2 sm:p-4 relative z-50">
       {/* Affichage du message cité façon messagerie moderne */}
@@ -340,6 +357,18 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
           </div>
         </div>
       )}
+      {/* Aperçu de l'audio à envoyer */}
+      {audioPreview && (
+        <div className="w-full flex flex-col items-center mb-2">
+          <div className="bg-black border-2 border-red-700 rounded-lg shadow-lg p-2 flex flex-col items-center">
+            <audio src={audioPreview} controls className="w-full max-w-xs mb-2 rounded border-2 border-white bg-black" />
+            <div className="flex gap-2">
+              <button type="button" onClick={handleSendAudioPreview} className="px-4 py-2 bg-red-700 text-white rounded-lg border-2 border-white hover:bg-black hover:text-red-700 transition-colors font-mono">Envoyer</button>
+              <button type="button" onClick={handleCancelAudio} className="px-4 py-2 bg-black text-red-700 rounded-lg border-2 border-red-700 hover:bg-red-700 hover:text-white transition-colors font-mono">Annuler</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-2 w-full sm:w-auto order-1 sm:order-none">
         <button
@@ -364,7 +393,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onSendFile, onSend
           onClick={recording ? stopRecording : startRecording}
           className={`flex-shrink-0 w-10 h-10 p-0 rounded-lg border-2 border-white transition-colors flex items-center justify-center ${recording ? 'bg-red-700 text-white' : 'bg-black text-red-700 hover:bg-red-700/20'}`}
           style={{ aspectRatio: '1 / 1', minWidth: 40, minHeight: 40 }}
-          disabled={!isConnected}
+          disabled={!isConnected || !!audioPreview}
         >
           {recording ? '⏹️' : '🎤'}
         </button>

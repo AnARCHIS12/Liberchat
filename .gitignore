@@ -119,5 +119,6 @@ package-ancienneversionnosecure..json
 /gui_manager/*.log
 /gui_manager/*.lock
 /gui_manager/out/
+/docker
 
 # Fin
