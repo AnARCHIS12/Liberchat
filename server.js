@@ -24,7 +24,7 @@ const onionDomains = allowedDomains.filter(d => d.includes('.onion'));
 const localDomains = allowedDomains.filter(d => /^(http:\/\/)?(\d+\.\d+\.\d+\.\d+)(:\d+)?$/.test(d));
 const defaultCsp = {
   defaultSrc: ["'self'"],
-  mediaSrc: ["'self'", "data:"],
+  mediaSrc: ["'self'", "data:", "blob:"],
   imgSrc: ["'self'", "data:", "blob:", "https://cdn.jsdelivr.net", "https://unpkg.com", "https://emoji-cdn.jsdelivr.net", "https://cdn.jsdelivr.net/npm/emoji-picker-react@*"],
   scriptSrc: ["'self'", "'unsafe-eval'"],
   styleSrc: ["'self'", "'unsafe-inline'"],
