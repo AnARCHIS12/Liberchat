@@ -1,0 +1,427 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-gray-900;
+}
+
+/* Light and Dark Theme Styles */
+body.theme-dark {
+  background-color: #18181b;
+  color: #fff;
+}
+body.theme-light {
+  background-color: #f8f8fa;
+  color: #18181b;
+}
+
+.theme-light .bg-gray-900,
+.theme-light .bg-black {
+  background-color: #fff !important;
+}
+.theme-light .text-white {
+  color: #18181b !important;
+}
+.theme-light .border-red-700 {
+  border-color: #e53935 !important;
+}
+.theme-light .bg-red-700 {
+  background-color: #e53935 !important;
+}
+.theme-light .text-red-300 {
+  color: #e53935 !important;
+}
+.theme-light .bg-red-700\/80 {
+  background-color: rgba(229,57,53,0.8) !important;
+}
+.theme-light .text-gray-400 {
+  color: #555 !important;
+}
+.theme-light .font-mono {
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+}
+.theme-light .border-white {
+  border-color: #bbb !important;
+}
+.theme-light .shadow-lg, .theme-light .shadow {
+  box-shadow: 0 2px 12px #e5393533 !important;
+}
+.theme-light .rounded-xl, .theme-light .rounded-lg {
+  background-color: #fff !important;
+}
+.theme-light .bg-black\/80 {
+  background-color: #f3f3f7 !important;
+}
+.theme-light .bg-black\/95 {
+  background-color: #f8f8fa !important;
+}
+.theme-light .bg-gray-800 {
+  background-color: #f3f3f7 !important;
+}
+.theme-light .text-gray-300 {
+  color: #888 !important;
+}
+.theme-light .bg-white\/90 {
+  background-color: #fff !important;
+}
+.theme-light .bg-gradient-to-r {
+  background: linear-gradient(90deg, #e53935 0%, #fff 100%) !important;
+}
+.theme-light .text-red-400 {
+  color: #b71c1c !important;
+}
+.theme-light .bg-red-800 {
+  background-color: #b71c1c !important;
+}
+.theme-light .hover\:bg-red-700\/80:hover {
+  background-color: #e57373 !important;
+}
+.theme-light .hover\:bg-red-700:hover {
+  background-color: #e57373 !important;
+}
+.theme-light .hover\:bg-gray-800:hover {
+  background-color: #ececec !important;
+}
+.theme-light .bg-gray-600 {
+  background-color: #e0e0e0 !important;
+}
+.theme-light .bg-gray-500 {
+  background-color: #bdbdbd !important;
+}
+.theme-light .bg-gray-200 {
+  background-color: #f3f3f7 !important;
+}
+.theme-light .text-black {
+  color: #18181b !important;
+}
+.theme-light .bg-white {
+  background-color: #fff !important;
+}
+.theme-light .border-gray-700 {
+  border-color: #bbb !important;
+}
+.theme-light .bg-black {
+  background-color: #fff !important;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+/* Style anarchiste pour le menu emojis */
+.anarchist-emoji-picker {
+  font-family: 'Fira Mono', monospace;
+  border-style: dashed;
+  box-shadow: 0 0 16px 4px #b91c1c;
+}
+.anarchist-emoji-inner .epr-emoji-category-label {
+  color: #b91c1c !important;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+.anarchist-emoji-inner .epr-emoji {
+  filter: grayscale(0.2) contrast(1.2);
+}
+.anarchist-emoji-inner .epr-search {
+  background: #1a1a1a;
+  color: #b91c1c;
+  border: 1px dashed #b91c1c;
+}
+.anarchist-emoji-inner .epr-preview {
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+}
+.anarchist-emoji-inner,
+.anarchist-emoji-inner .epr-body,
+.anarchist-emoji-inner .epr-emoji-picker {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: auto !important;
+  padding: 0 !important;
+}
+.anarchist-emoji-inner {
+  width: 100%;
+  max-width: 100%;
+  max-height: 320px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* ===== STYLES D'ACCESSIBILITÉ ===== */
+
+/* Classe pour masquer visuellement mais garder accessible aux lecteurs d'écran */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Contraste élevé */
+.high-contrast {
+  --bg-primary: #000000;
+  --bg-secondary: #000000;
+  --text-primary: #ffffff;
+  --text-secondary: #ffff00;
+  --border-primary: #ffff00;
+  --accent-primary: #ffff00;
+  --accent-secondary: #ffffff;
+}
+
+.high-contrast * {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+.high-contrast .bg-red-700,
+.high-contrast .bg-red-800,
+.high-contrast .text-red-400,
+.high-contrast .text-red-300,
+.high-contrast .border-red-700 {
+  background-color: var(--accent-primary) !important;
+  color: var(--bg-primary) !important;
+  border-color: var(--accent-primary) !important;
+}
+
+.high-contrast button:focus,
+.high-contrast input:focus,
+.high-contrast textarea:focus {
+  outline: 3px solid var(--accent-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* Tailles de police */
+.font-small {
+  font-size: 0.875rem;
+}
+
+.font-normal {
+  font-size: 1rem;
+}
+
+.font-large {
+  font-size: 1.25rem;
+}
+
+.font-xlarge {
+  font-size: 1.5rem;
+}
+
+.font-small * {
+  font-size: 0.875rem !important;
+}
+
+.font-large * {
+  font-size: 1.25rem !important;
+}
+
+.font-xlarge * {
+  font-size: 1.5rem !important;
+}
+
+/* Police dyslexie (fallback vers Comic Sans MS) */
+
+.dyslexia-font,
+.dyslexia-font * {
+  font-family: 'Comic Sans MS', 'Trebuchet MS', cursive !important;
+  letter-spacing: 0.1em !important;
+  line-height: 1.6 !important;
+}
+
+/* Réduction des animations */
+.reduce-motion,
+.reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+.reduce-motion .animate-pulse,
+.reduce-motion .animate-bounce,
+.reduce-motion .animate-spin {
+  animation: none !important;
+}
+
+/* Mode lecteur d'écran */
+.screen-reader-mode {
+  --focus-ring-width: 4px;
+  --focus-ring-color: #ffff00;
+}
+
+.screen-reader-mode *:focus {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 calc(var(--focus-ring-width) + 2px) rgba(255, 255, 0, 0.3) !important;
+}
+
+.screen-reader-mode button,
+.screen-reader-mode input,
+.screen-reader-mode textarea,
+.screen-reader-mode select {
+  position: relative;
+}
+
+.screen-reader-mode button:focus::after,
+.screen-reader-mode input:focus::after,
+.screen-reader-mode textarea:focus::after {
+  content: attr(aria-label);
+  position: absolute;
+  top: -2rem;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+/* Navigation clavier améliorée */
+.keyboard-navigation {
+  --focus-ring-width: 3px;
+  --focus-ring-color: #ff0000;
+}
+
+.keyboard-navigation *:focus {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color) !important;
+  outline-offset: 2px !important;
+  z-index: 100 !important;
+}
+
+.keyboard-navigation button:focus,
+.keyboard-navigation input:focus,
+.keyboard-navigation textarea:focus,
+.keyboard-navigation [tabindex]:focus {
+  transform: scale(1.05) !important;
+  transition: transform 0.1s ease !important;
+}
+
+.keyboard-navigation .keyboard-shortcut {
+  position: relative;
+}
+
+.keyboard-navigation .keyboard-shortcut::after {
+  content: attr(data-shortcut);
+  position: absolute;
+  top: -1.5rem;
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.125rem;
+  font-size: 0.75rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.keyboard-navigation .keyboard-shortcut:focus::after,
+.keyboard-navigation .keyboard-shortcut:hover::after {
+  opacity: 1;
+}
+
+/* Amélioration des contrastes pour les éléments interactifs */
+.high-contrast button,
+.high-contrast input,
+.high-contrast textarea {
+  border: 2px solid var(--accent-primary) !important;
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.high-contrast button:hover,
+.high-contrast button:focus {
+  background-color: var(--accent-primary) !important;
+  color: var(--bg-primary) !important;
+}
+
+/* Indicateurs visuels pour les états */
+.keyboard-navigation [aria-pressed="true"],
+.keyboard-navigation [aria-selected="true"] {
+  box-shadow: inset 0 0 0 2px #ff0000 !important;
+}
+
+.screen-reader-mode [aria-live] {
+  border: 1px dashed #ffff00;
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+}
+
+/* Amélioration de la lisibilité */
+.dyslexia-font p,
+.dyslexia-font div,
+.dyslexia-font span {
+  word-spacing: 0.2em !important;
+  text-align: left !important;
+}
+
+/* Styles pour les messages d'accessibilité */
+.accessibility-announcement {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: #000;
+  color: #fff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 2px solid #ffff00;
+  z-index: 9999;
+  max-width: 300px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.reduce-motion .accessibility-announcement {
+  animation: none !important;
+}
+
+/* Focus visible amélioré */
+.keyboard-navigation *:focus-visible {
+  outline: 3px solid #ff0000 !important;
+  outline-offset: 2px !important;
+}
+
+/* Amélioration des liens */
+.keyboard-navigation a:focus,
+.screen-reader-mode a:focus {
+  text-decoration: underline !important;
+  background-color: rgba(255, 255, 0, 0.3) !important;
+}
