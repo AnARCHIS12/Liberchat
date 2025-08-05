@@ -187,6 +187,14 @@ Pour activer le mode light :
 - **🔧 Amélioration de la logique d'application des thèmes** : refactorisation complète pour une meilleure gestion des priorités CSS.
 - **🖍️ Thèmes prédéfinis stabilisés** : tous les thèmes (Rouge Anarchiste, Cyberpunk, Bleu Clair) fonctionnent parfaitement en mode sombre et clair.
 
+## 🆕 Corrections et changements récents (6.1.19)
+
+- **♿ Implémentation complète de l'accessibilité** : bouton dédié dans l'en-tête, paramètres sauvegardés localement, conformité WCAG 2.1 niveau AA, étiquettes ARIA complètes.
+- Support des lecteurs d'écran (NVDA, JAWS, VoiceOver, TalkBack, Orca) avec annonces vocales automatiques.
+- Navigation clavier complète avec raccourcis globaux et focus visible renforcé.
+- **🖍️ Thèmes personnalisables** : interface pour créer, modifier et appliquer des thèmes CSS personnalisés avec thèmes prédéfinis (Rouge Anarchiste, Cyberpunk).
+
+
 ## 🆕 Corrections et changements récents (6.1.18)
 
 - Ajout de la prévisualisation audio dans la zone de saisie : l’utilisateur peut écouter son message vocal avant de l’envoyer ou de l’annuler.
