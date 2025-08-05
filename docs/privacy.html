@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liberchat - Politique de Confidentialité</title>
+    <link rel="icon" type="image/png" href="assets/icon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .privacy-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+        }
+
+        .privacy-section {
+            background: var(--card-background);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .privacy-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .privacy-section h3 {
+            color: var(--accent-color);
+            margin: 1.5rem 0 1rem;
+        }
+
+        .privacy-list {
+            list-style: none;
+            padding-left: 1.5rem;
+        }
+
+        .privacy-list li {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .privacy-list li::before {
+            content: "•";
+            color: var(--primary-color);
+            position: absolute;
+            left: -1.5rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="assets/icon.png" alt="Liberchat Logo" class="logo-img">
+                <span>Liberchat</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#features">Fonctionnalités</a></li>
+                <li><a href="index.html#download">Télécharger</a></li>
+                <li><a href="index.html#about">À propos</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="privacy-container">
+        <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Retour à l'accueil
+        </a>
+
+        <div class="privacy-section">
+            <h2>Politique de Confidentialité</h2>
+            <p>Chez Liberchat, votre vie privée est notre priorité absolue. Notre application est conçue selon le principe de la confidentialité dès la conception.</p>
+            
+            <h3>Données Collectées</h3>
+            <ul class="privacy-list">
+                <li><strong>Aucune donnée personnelle</strong> n'est collectée sans votre consentement explicite</li>
+                <li>Les messages sont <strong>chiffrés de bout en bout</strong></li>
+                <li>Aucune métadonnée de communication n'est stockée sur nos serveurs</li>
+                <li>Les fichiers partagés sont automatiquement supprimés après le téléchargement</li>
+            </ul>
+
+            <h3>Architecture Décentralisée</h3>
+            <ul class="privacy-list">
+                <li>Pas de serveur central stockant vos données</li>
+                <li>Communications directes entre pairs (P2P)</li>
+                <li>Aucun compte requis pour utiliser l'application</li>
+            </ul>
+        </div>
+
+        <div class="privacy-section">
+            <h2>Conformité RGPD</h2>
+            <p>Liberchat est entièrement conforme au Règlement Général sur la Protection des Données (RGPD) de l'Union Européenne.</p>
+
+            <h3>Vos Droits</h3>
+            <ul class="privacy-list">
+                <li>Droit d'accès à vos données</li>
+                <li>Droit de rectification</li>
+                <li>Droit à l'effacement</li>
+                <li>Droit à la portabilité des données</li>
+                <li>Droit d'opposition au traitement</li>
+            </ul>
+
+            <h3>Sécurité des Données</h3>
+            <ul class="privacy-list">
+                <li>Chiffrement de bout en bout utilisant des algorithmes modernes</li>
+                <li>Protocoles de sécurité régulièrement audités</li>
+                <li>Code source ouvert pour une transparence totale</li>
+            </ul>
+        </div>
+
+        <div class="privacy-section">
+            <h2>Cookies et Traceurs</h2>
+            <p>Liberchat n'utilise aucun cookie ni traceur. Nous ne suivons pas votre activité en ligne.</p>
+
+            <h3>Ce que nous ne faisons PAS</h3>
+            <ul class="privacy-list">
+                <li>Pas de publicités</li>
+                <li>Pas de tracking</li>
+                <li>Pas de vente de données</li>
+                <li>Pas d'analyse comportementale</li>
+            </ul>
+        </div>
+
+        <div class="privacy-section">
+            <h2>Contact</h2>
+            <p>Pour toute question concernant vos données personnelles ou pour exercer vos droits RGPD :</p>
+            <ul class="privacy-list">
+                <li>Email : contact@unionlibertaireanarchiste.org</li>
+                <li>Discord : <a href="https://discord.gg/ExwFj4drZK">Rejoindre le serveur</a></li>
+                <li>GitHub : Ouvrir une issue sur notre dépôt</li>
+            </ul>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
