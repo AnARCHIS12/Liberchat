@@ -1,6 +1,6 @@
 <div align="center">
 
-> 🚀 **Branche de développement active : `Liberchat-6.1.19
+> 🚀 **Branche de développement active : `Liberchat-6.1.20
 
 # 🚩✊ Liberchat — La Commune Numérique
 
@@ -14,7 +14,7 @@
 [![Logiciel Libre](https://img.shields.io/badge/Logiciel_Libre-100%25-black?style=for-the-badge)](#)
 [![Anarcho-syndicaliste](https://img.shields.io/badge/Anarcho--syndicaliste-Noir_&_Rouge-black?style=for-the-badge&labelColor=ff2800)](#)
 
-[![Version](https://img.shields.io/badge/Version-6.1.19-red?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/Version-6.1.20-red?style=for-the-badge)](#)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
@@ -165,12 +165,12 @@ Pour activer le mode light :
 - Amélioration CSS pour garantir la compatibilité mobile et l’accessibilité du champ de saisie.
 - README mis à jour pour refléter ces changements.
 
-## 🆕 Nouveautés de la version 6.1.19
+## 🆕 Nouveautés de la version 6.1.20
 
-- **♿ Mode Accessibilité Complet** : contraste élevé, taille de police ajustable, police dyslexie, réduction des animations, support lecteurs d'écran, navigation clavier avec raccourcis (Alt+A, Alt+T, Alt+Q).
-- Bouton d'accessibilité dédié dans l'en-tête avec sauvegarde locale des préférences.
-- Conformité WCAG 2.1 niveau AA avec étiquettes ARIA complètes.
-- **🖍️ Thèmes personnalisables CSS** : créez et appliquez vos propres thèmes avec du CSS personnalisé, sauvegardés localement.
+- **🎨 Correction des thèmes personnalisés en mode clair** : les thèmes CSS personnalisés fonctionnent maintenant parfaitement avec le mode light.
+- **⚡ Optimisation des performances** : correction de la boucle infinie dans le hook useCustomThemes pour une meilleure stabilité.
+- **🔧 Amélioration de l'application des thèmes** : logique d'application des thèmes repensée pour une compatibilité maximale.
+- **🖍️ Thèmes prédéfinis améliorés** : thèmes Rouge Anarchiste, Cyberpunk et Bleu Clair optimisés pour tous les modes.
 
 ## 🆕 Nouveautés de la version 6.1.18
 
@@ -180,12 +180,12 @@ Pour activer le mode light :
 - Documentation de la gestion des branches git : conseils pour créer, basculer et pousser correctement les branches de développement.
 - Amélioration de la robustesse de la connexion WebSocket/Socket.IO côté client (meilleure gestion des ports et de l’URL de connexion).
 
-## 🆕 Corrections et changements récents (6.1.19)
+## 🆕 Corrections et changements récents (6.1.20)
 
-- **♿ Implémentation complète de l'accessibilité** : bouton dédié dans l'en-tête, paramètres sauvegardés localement, conformité WCAG 2.1 niveau AA, étiquettes ARIA complètes.
-- Support des lecteurs d'écran (NVDA, JAWS, VoiceOver, TalkBack, Orca) avec annonces vocales automatiques.
-- Navigation clavier complète avec raccourcis globaux et focus visible renforcé.
-- **🖍️ Thèmes personnalisables** : interface pour créer, modifier et appliquer des thèmes CSS personnalisés avec thèmes prédéfinis (Rouge Anarchiste, Cyberpunk).
+- **🎨 Correction majeure des thèmes personnalisés** : résolution du problème d'incompatibilité avec le mode clair, les thèmes CSS s'appliquent maintenant correctement sur tous les modes.
+- **⚡ Optimisation du hook useCustomThemes** : suppression de la boucle infinie causée par les dépendances problématiques dans useEffect.
+- **🔧 Amélioration de la logique d'application des thèmes** : refactorisation complète pour une meilleure gestion des priorités CSS.
+- **🖍️ Thèmes prédéfinis stabilisés** : tous les thèmes (Rouge Anarchiste, Cyberpunk, Bleu Clair) fonctionnent parfaitement en mode sombre et clair.
 
 ## 🆕 Corrections et changements récents (6.1.18)
 
