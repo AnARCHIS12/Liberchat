@@ -7,7 +7,7 @@
 <img src="public/images/liberchat-logo.svg" alt="Liberchat Logo" width="200"/>
 
 <p align="center" style="font-size:1.2em; color:#ff2800; font-weight:bold;">
-« Pour l’autogestion, la solidarité et la liberté numérique. Un chat libre, par et pour le peuple. »
+« Pour l’autogestion, la solidarité et la liberté numérique. Un chat libre, par et pour le prolétariat . »
 </p>
 
 [![Anticapitaliste](https://img.shields.io/badge/Anticapitaliste-✊-red?style=for-the-badge)](#)
