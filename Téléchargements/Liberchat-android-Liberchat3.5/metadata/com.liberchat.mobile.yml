@@ -1,0 +1,55 @@
+Categories:
+  - Internet
+  - System
+
+License: MIT
+
+AuthorName: Liberchat team
+AuthorEmail: [email]
+AuthorWebSite: https://github.com/Liberchat
+
+WebSite: https://github.com/Liberchat/Liberchat-android
+SourceCode: https://github.com/Liberchat/Liberchat-android
+IssueTracker: https://github.com/Liberchat/Liberchat-android/issues
+
+AutoName: Liberchat
+Name: Liberchat
+
+Summary: Application de chat moderne et open-source
+
+Description: |-
+    Liberchat est une application de chat moderne, open-source, basée sur Flutter et dédiée uniquement à Android.
+    
+    Fonctionnalités principales :
+    * Interface moderne et responsive
+    * WebView sécurisé avec gestion des permissions
+    * Splash screen animé
+    * Thème sombre élégant
+    * Sélection du serveur au démarrage (auto-hébergement possible)
+    * Support de Tor via Orbot pour la confidentialité
+    
+    L'application permet de se connecter à différents serveurs de chat et offre une expérience utilisateur fluide avec un design moderne.
+
+RepoType: git
+Repo: https://github.com/Liberchat/Liberchat-android
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 1
+    commit: v1.0.0
+    subdir: android
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+      - update-java-alternatives -a
+    init: flutter packages get
+    gradle:
+      - yes
+    output: build/app/outputs/flutter-apk/app-release.apk
+    prebuild: |-
+      flutter build apk --release
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.0
+CurrentVersionCode: 1
