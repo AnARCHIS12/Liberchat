@@ -113,6 +113,33 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.get('/api/link-preview', async (req, res) => {
   const url = req.query.url;
   if (!url || typeof url !== 'string') return res.status(400).json({ error: 'URL manquante' });
+  
+  // SSRF protection begins
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    return res.status(400).json({ error: 'URL invalide' });
+  }
+  // Only allow http or https
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+    return res.status(400).json({ error: 'Protocole non autorisé' });
+  }
+  const deniedHosts = ['localhost', '127.0.0.1', '0.0.0.0'];
+  const deniedSuffixes = ['.onion', '.local'];
+  const host = parsedUrl.hostname;
+  // Block localhost and related
+  if (
+    deniedHosts.includes(host) ||
+    deniedSuffixes.some(suffix => host.endsWith(suffix)) ||
+    /^10\.([0-9]{1,3}\.){2}[0-9]{1,3}$/.test(host) ||
+    /^192\.168\.([0-9]{1,3}\.)[0-9]{1,3}$/.test(host) ||
+    /^172\.(1[6-9]|2[0-9]|3[0-1])\.([0-9]{1,3}\.)[0-9]{1,3}$/.test(host)
+  ) {
+    return res.status(400).json({ error: 'Hôte non autorisé' });
+  }
+  // SSRF protection ends
+
   try {
     const response = await fetch(url, {
       headers: {
