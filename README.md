@@ -274,15 +274,6 @@ npm install
 npm run dev
 ```
 
-## 📦 Releases
-
-### Dernière version
-[![Release](https://img.shields.io/badge/Release-Beta%201.0.0-red?style=for-the-badge)](#)
-
-La dernière version (Beta 1.0.0) inclut :
-- Le nouveau logo moderne
-- L'interface de chat en temps réel
-- Le support des messages texte
 
 <div align="center">
 
